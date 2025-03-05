@@ -60,7 +60,6 @@ toc:
               - file: search/inference-api/jinaai-inference-integration.md
               - file: search/inference-api/mistral-inference-integration.md
               - file: search/inference-api/openai-inference-integration.md
-              - file: search/inference-api/watsonx-inference-integration.md
       - file: search/rag.md
         children:
           - file: search/rag/playground.md
