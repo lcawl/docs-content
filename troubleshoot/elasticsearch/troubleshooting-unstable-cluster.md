@@ -2,6 +2,9 @@
 navigation_title: Unstable clusters
 mapped_pages:
   - https://www.elastic.co/guide/en/elasticsearch/reference/current/troubleshooting-unstable-cluster.html
+applies_to:
+  serverless: all
+  stack: all
 ---
 
 # Troubleshoot an unstable cluster [troubleshooting-unstable-cluster]
@@ -167,6 +170,11 @@ cat shardlock.log | sed -e 's/.*://' | base64 --decode | gzip --decompress
 
 
 ## Diagnosing other network disconnections [troubleshooting-unstable-cluster-network]
+```yaml {applies_to}
+deployment:
+  ece: ga 3.7.0
+  self: ga 9.1.0
+```
 
 {{es}} is designed to run on a fairly reliable network. It opens a number of TCP connections between nodes and expects these connections to remain open [forever](elasticsearch://reference/elasticsearch/configuration-reference/networking-settings.md#long-lived-connections). If a connection is closed then {{es}} will try and reconnect, so the occasional blip may fail some in-flight operations but should otherwise have limited impact on the cluster. In contrast, repeatedly-dropped connections will severely affect its operation.
 
