@@ -6,6 +6,10 @@ products:
 
 # {{serverless-full}} breaking changes [elastic-cloud-serverless-breaking-changes]
 
+:::{changelog} /releases
+:type: breaking-change
+:::
+
 ## April 15, 2026 [elastic-cloud-serverless-04152026-breaking]
 
 :::{dropdown} Disables sequence numbers for TSDB indices in release builds

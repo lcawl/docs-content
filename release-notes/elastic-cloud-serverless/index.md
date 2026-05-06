@@ -9,6 +9,9 @@ products:
 # {{serverless-full}} changelog [elastic-cloud-serverless-changelog]
 Review the changes, fixes, and more to {{serverless-full}}.
 
+:::{changelog} /releases
+:::
+
 ## April 30, 2026 [serverless-changelog-04302026]
 
 ### Features and enhancements [serverless-changelog-04302026-features-enhancements]
