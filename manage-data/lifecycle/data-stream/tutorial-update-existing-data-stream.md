@@ -10,18 +10,23 @@ products:
 
 # Update the lifecycle of a data stream [tutorial-manage-existing-data-stream]
 
-Follow these steps to configure or remove data stream lifecycle settings for an existing, individual data stream.
+Follow these steps to configure or remove data stream lifecycle settings for an existing data stream.
 
-- [Set a data stream’s lifecycle](#set-lifecycle)
+- [Set global data stream retention](#set-lifecycle-retention)
+- [Set a data stream's lifecycle](#set-lifecycle)
 - [Remove the lifecycle for a data stream](#delete-lifecycle)
 - [Manage data retention on the Streams page](#data-retention-streams)
 
 These steps are for data stream lifecycle only. For the steps to configure {{ilm}}, refer to the [{{ilm-init}} documentation](/manage-data/lifecycle/index-lifecycle-management.md). For a comparison between the two, refer to [](/manage-data/lifecycle.md).
 
-## Set a data stream’s lifecycle [set-lifecycle]
+## Set global data stream retention [set-lifecycle-retention]
+
+:::{include} _snippets/global-data-stream-retention.md
+:::
+
+## Set a data stream's lifecycle [set-lifecycle]
 
 To add or to change the retention period of your data stream you can use the **Index Management** tools in {{kib}} or the {{es}} [lifecycle API]({{es-apis}}operation/operation-indices-put-data-lifecycle).
-
 
 :::::{tab-set}
 :group: kibana-api
@@ -141,7 +146,7 @@ The response will look like:
 6. This index is managed by the built-in data stream lifecycle.
 7. The time that has passed since this index has been created.
 8. The time that has passed since this index was [rolled over](../index-lifecycle-management/rollover.md).
-9. The time that will be used to determine when it’s safe to delete this index and all its data.
+9. The time that will be used to determine when it's safe to delete this index and all its data.
 10. The data retention for this index as well is at least 30 days, as it was recently updated.
 
 :::

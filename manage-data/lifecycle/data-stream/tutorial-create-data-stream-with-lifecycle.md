@@ -12,10 +12,15 @@ products:
 
 Follow these steps to create an {{es}} data stream with a configured lifecycle. Learn how to set the retention period for your data and to retrieve the lifecycle configuration details.
 
-1. [Create an index template](#create-index-template-with-lifecycle)
-2. [Create a data stream](#create-data-stream-with-lifecycle)
-3. [Retrieve lifecycle information](#retrieve-lifecycle-information)
+1. [Set global data stream retention](#set-lifecycle-retention)
+2. [Create an index template](#create-index-template-with-lifecycle)
+3. [Create a data stream](#create-data-stream-with-lifecycle)
+4. [Retrieve lifecycle information](#retrieve-lifecycle-information)
 
+## Set global data stream retention [set-lifecycle-retention]
+
+:::{include} _snippets/global-data-stream-retention.md
+:::
 
 ## Create an index template [create-index-template-with-lifecycle]
 
@@ -35,7 +40,7 @@ PUT _index_template/my-index-template
   "priority": 500,
   "template": {
     "lifecycle": {
-      "data_retention": "7d"
+      "data_retention": "30d" <2>
     }
   },
   "_meta": {
@@ -43,7 +48,9 @@ PUT _index_template/my-index-template
   }
 }
 ```
+
 1. In this case the index template will be applied to a data stream named `my-data-stream-test`. You can optionally use a wildcard (`*`) in the index pattern to match all data streams created (either manually or using an indexing request) that have a name matching the specified pattern.
+2. This setting is optional and overrides the global data stream retention settings.
 
 ## Create a data stream [create-data-stream-with-lifecycle]
 
@@ -70,8 +77,6 @@ You can create a data stream in these ways:
     1. From the upper right, select **Create classic stream**.
     1. Select the index template you want to use, name your stream, and select **Create**.
 
-
-
 ## Retrieve lifecycle information [retrieve-lifecycle-information]
 
 You can use the [get data stream lifecycle API]({{es-apis}}operation/operation-indices-get-data-lifecycle) to see the data stream lifecycle of your data stream and the [explain data stream lifecycle API]({{es-apis}}operation/operation-indices-explain-data-lifecycle) to see the exact state of each backing index.
@@ -84,26 +89,30 @@ The result will look like this:
 
 ```console-result
 {
+  "global_retention" : {
+    "max_retention" : "90d",                                   <1>
+    "default_retention" : "7d"                                 <2>
+  },
   "data_streams": [
     {
-      "name": "my-data-stream-test",                                <1>
+      "name": "my-data-stream-test",                                <3>
       "lifecycle": {
-        "enabled": true,                                            <2>
-        "data_retention": "7d",                                     <3>
-        "effective_retention": "7d",                                <4>
+        "enabled": true,                                            <4>
+        "data_retention": "30d",                                     <5>
+        "effective_retention": "30d",                                <6>
         "retention_determined_by": "data_stream_configuration"
       }
     }
-  ],
-  "global_retention": {}
+  ]
 }
 ```
 
-1. The name of your data stream.
-2. Shows if the data stream lifecycle is enabled for this data stream.
-3. The retention period of the data indexed in this data stream, as configured by the user.
-4. The retention period that will be applied by the data stream lifecycle. This means that the data in this data stream will be kept at least for 7 days. After that {{es}} can delete it at its own discretion.
-
+1. The maximum retention configured in the cluster.
+2. The default retention configured in the cluster.
+3. The name of your data stream.
+4. Shows if the data stream lifecycle is enabled for this data stream.
+5. The retention period of the data indexed in this data stream, as configured by the user.
+6. The retention period that will be applied by the data stream lifecycle. This means that the data in this data stream will be kept at least for 30 days. After that {{es}} can delete it at its own discretion. For more details, refer to [How is the effective retention calculated?](/manage-data/lifecycle/data-stream/data-stream-retention.md#effective-retention-calculation)
 
 If you want to see more information about how the data stream lifecycle is applied on individual backing indices use the [explain data stream lifecycle API]({{es-apis}}operation/operation-indices-explain-data-lifecycle):
 
@@ -138,5 +147,3 @@ The result will look like this:
 2. If it is managed by the built-in data stream lifecycle.
 3. Time since the index was created.
 4. The lifecycle configuration that is applied on this backing index.
-
-
