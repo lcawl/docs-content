@@ -10,7 +10,9 @@ products:
 
 # Set up a data stream [set-up-a-data-stream]
 
-The process of setting up a data stream in {{stack}} and {{serverless-full}} is similar, making use of their respective APIs. However, because {{serverless-short}} provides a built-in [data stream lifecycle](/manage-data/lifecycle/data-stream.md) mechanism and retention settings, you don't need to configure index lifecycle management ({{ilm-init}}) options as you do in an {{stack}} deployment.
+The process of setting up a data stream in {{stack}} and {{serverless-full}} is similar, making use of their respective APIs. 
+
+<!-- However, because {{serverless-short}} provides a built-in [data stream lifecycle](/manage-data/lifecycle/data-stream.md) mechanism and retention settings, you don't need to configure index lifecycle management ({{ilm-init}}) options as you do in an {{stack}} deployment. -->
 
 To set up a data stream, follow these steps:
 
@@ -28,7 +30,6 @@ If you use {{fleet}}, {{agent}}, or {{ls}}, skip this tutorial. They all set up 
 For {{fleet}} and {{agent}}, refer to [](/reference/fleet/data-streams.md). For {{ls}}, refer to the [data streams settings](logstash-docs-md://lsr/plugins-outputs-elasticsearch.md#plugins-outputs-elasticsearch-data_stream) for the `elasticsearch output` plugin.
 
 :::
-
 
 ## Create an index lifecycle policy [create-index-lifecycle-policy]
 ```{applies_to}
@@ -263,7 +264,6 @@ Use [index privileges](elasticsearch://reference/elasticsearch/security-privileg
 
 For an example, refer to [Data stream privileges](../../../deploy-manage/users-roles/cluster-or-deployment-auth/granting-privileges-for-data-streams-aliases.md#data-stream-privileges).
 
-
 ## Convert an index alias to a data stream [convert-index-alias-to-data-stream]
 
 Prior to {{es}} 7.9, you’d typically use an index alias with a write index to manage time series data. Data streams replace this functionality, require less maintenance, and automatically integrate with [data tiers](../../lifecycle/data-tiers.md).
@@ -278,7 +278,6 @@ During conversion, the alias's indices become hidden backing indices for the str
 ```console
 POST _data_stream/_migrate/my-time-series-data
 ```
-
 
 ## Get information about a data stream [get-info-about-data-stream]
 

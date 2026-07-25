@@ -151,11 +151,15 @@ stack: ga 9.5
 serverless: unavailable
 ```
 
-You can add `frozen_after` to the lifecycle so older backing indices become partially mounted {{search-snaps}} on the frozen tier. For how conversion works, operational behavior, and troubleshooting blocked conversions, refer to [](/manage-data/lifecycle/data-stream/dlm-searchable-snapshots.md).
+You can add `frozen_after` to the lifecycle so older backing indices become partially mounted {{search-snaps}} on the frozen tier.
+For how conversion works, operational behavior, and troubleshooting blocked conversions, refer to [](/manage-data/lifecycle/data-stream/dlm-searchable-snapshots.md).
+
 
 1. Confirm that a default snapshot repository is registered. Refer to [Manage snapshot repositories](/deploy-manage/tools/snapshot-and-restore/manage-snapshot-repositories.md).
 
-2. Set `frozen_after` (and optionally `data_retention`) on the data stream lifecycle using the [PUT data stream lifecycle API]({{es-apis}}operation/operation-indices-put-data-lifecycle):
+2. Set `frozen_after` (and optionally `data_retention`) on the data stream lifecycle.
+   You cannot use the **{{index-manage-app}}** tools in {{kib}} to accomplish this step.
+   Use the [PUT data stream lifecycle API]({{es-apis}}operation/operation-indices-put-data-lifecycle):
 
     ```console
     PUT _data_stream/my-data-stream/_lifecycle
@@ -165,7 +169,8 @@ You can add `frozen_after` to the lifecycle so older backing indices become part
     }
     ```
 
-    In this example, backing indices older than 30 days are converted to frozen {{search-snaps}}. {{es}} can still delete indices when their `generation_time` exceeds the effective retention period, even after they have been frozen.
+    In this example, backing indices older than 30 days are converted to frozen {{search-snaps}}.
+    {{es}} can still delete indices when their `generation_time` exceeds the effective retention period, even after they have been frozen.
 
 3. Verify the lifecycle configuration and conversion status using the [explain data lifecycle API]({{es-apis}}operation/operation-indices-explain-data-lifecycle):
 
@@ -174,10 +179,6 @@ You can add `frozen_after` to the lifecycle so older backing indices become part
     ```
 
     If conversions are blocked, refer to [Troubleshooting](/manage-data/lifecycle/data-stream/dlm-searchable-snapshots.md#dlm-frozen-transition-troubleshooting).
-
-::::{note}
-The **{{index-manage-app}}** data stream details flow is focused on retention. When you need `frozen_after`, configure it with the API or in the index template lifecycle.
-::::
 
 ## Remove the lifecycle for a data stream [delete-lifecycle]
 
