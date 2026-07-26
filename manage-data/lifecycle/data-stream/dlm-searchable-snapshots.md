@@ -12,7 +12,7 @@ products:
 # {{search-snaps-cap}} for data streams
 
 A data stream lifecycle ({{dlm-init}}) can automatically convert older backing indices to [{{search-snaps}}](/deploy-manage/tools/snapshot-and-restore/searchable-snapshots.md) on the [frozen tier](/manage-data/lifecycle/data-tiers.md).
-This frozen phase transition feature lets you retain data for long periods at low storage cost while keeping it searchable, without manual snapshot or mount operations.
+This frozen transition feature lets you retain data for long periods at low storage cost while keeping it searchable, without manual snapshot or mount operations.
 
 This page explains how frozen transitions work, what you need before they can run, and how to diagnose blocked conversions.
 To configure `frozen_after` on a new or existing data stream, refer to [Next steps](/manage-data/lifecycle/data-stream/dlm-searchable-snapshots.md#next-steps).
@@ -30,7 +30,7 @@ Frozen transitions run only when the following conditions are met:
 When a backing index's creation date is older than the `frozen_after` period configured on the data stream lifecycle, {{dlm-init}} converts it to a [partially mounted {{search-snap}}](/deploy-manage/tools/snapshot-and-restore/searchable-snapshots.md#partially-mounted) index allocated on frozen nodes. The conversion happens automatically in the background.
 
 The `frozen_after` field controls when backing indices become eligible for conversion.
-You set it on the data stream lifecycle when you create or update a stream.
+You set it on the data stream lifecycle when you create or update a stream or index template.
 To stop future frozen conversions, update the lifecycle and omit or null the `frozen_after` field.
 However, after an index is past its `frozen_after` time and marked as eligible for conversion, changing `frozen_after` does not stop that conversion.
 
@@ -52,7 +52,8 @@ When a backing index becomes eligible for frozen conversion, {{dlm-init}} perfor
 
 ### Transition service and cleanup [dlm-frozen-transition-tuning]
 
-A background transition service on the master node scans for indices ready for conversion and runs conversions concurrently. You can tune poll intervals, thread pool size, and queue size using the [frozen tier transition settings](elasticsearch://reference/elasticsearch/configuration-reference/data-stream-lifecycle-settings.md#_frozen_tier_transition_settings) in `elasticsearch.yml`.
+A background transition service on the master node scans for indices ready for conversion and runs conversions concurrently.
+You can configure poll intervals, thread pool size, and queue size using the [frozen tier transition settings](elasticsearch://reference/elasticsearch/configuration-reference/data-stream-lifecycle-settings.md#_frozen_tier_transition_settings) in `elasticsearch.yml`.
 
 If a conversion is interrupted, {{dlm-init}} might leave behind orphaned clone indices (`dlm-clone-*`) or snapshots. A separate cleanup service on the master node periodically removes these artifacts. The cleanup interval is controlled by the [`dlm.frozen.cleanup.poll_interval`](elasticsearch://reference/elasticsearch/configuration-reference/data-stream-lifecycle-settings.md) setting (default: `1d`, minimum: `1h`).
 
