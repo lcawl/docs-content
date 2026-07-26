@@ -10,17 +10,16 @@ products:
 
 # Set up a data stream [set-up-a-data-stream]
 
-The process of setting up a data stream in {{stack}} and {{serverless-full}} is similar, making use of their respective APIs. 
-
-<!-- However, because {{serverless-short}} provides a built-in [data stream lifecycle](/manage-data/lifecycle/data-stream.md) mechanism and retention settings, you don't need to configure index lifecycle management ({{ilm-init}}) options as you do in an {{stack}} deployment. -->
+The process of setting up a data stream in {{stack}} and {{serverless-full}} is similar, making use of their respective APIs. The main difference is how you manage lifecycle: {{ilm-init}} is available on {{stack}} deployments only, while [data stream lifecycle](/manage-data/lifecycle/data-stream.md) is available on both.
 
 To set up a data stream, follow these steps:
 
-1. [Create an index lifecycle policy](#create-index-lifecycle-policy) {applies_to}`serverless: unavailable`
-2. [Create component templates](#create-component-templates)
-3. [Create an index template](#create-index-template)
-4. [Create the data stream](#create-data-stream)
-5. [Secure the data stream](#secure-data-stream)
+1. [Choose lifecycle management](#choose-lifecycle-management)
+2. [Create an index lifecycle policy](#create-index-lifecycle-policy) {applies_to}`serverless: unavailable`
+3. [Create component templates](#create-component-templates)
+4. [Create an index template](#create-index-template)
+5. [Create the data stream](#create-data-stream)
+6. [Secure the data stream](#secure-data-stream)
 
 You can also [convert an index alias to a data stream](#convert-index-alias-to-data-stream).
 
@@ -31,15 +30,25 @@ For {{fleet}} and {{agent}}, refer to [](/reference/fleet/data-streams.md). For 
 
 :::
 
+## Choose lifecycle management [choose-lifecycle-management]
+
+Before you create templates, decide how you want to manage your data stream's backing indices. Refer to [Data lifecycle](/manage-data/lifecycle.md) for a full comparison of your options.
+
+* **Data stream lifecycle:** Prefer this option when you mainly need retention, rollover, and storage optimization without configuring data tiers. Data stream lifecycle is available on {{stack}} and {{serverless-full}}.
+* **{{ilm-init}}:** Use this option on {{stack}} when you need to transition backing indices through [data tiers](/manage-data/lifecycle/data-tiers.md) and configure richer phase actions, such as shrink, force merge, and searchable snapshots per tier.
+
+The rest of this tutorial branches on your choice. You configure lifecycle in your index template (data stream lifecycle) or in an {{ilm-init}} policy referenced from the template ({{stack}} only).
+
 ## Create an index lifecycle policy [create-index-lifecycle-policy]
+
 ```{applies_to}
 serverless: unavailable
 ```
 
-While optional, we recommend using the {{ilm}} ({{ilm-init}}) capability in {{stack}} deployments to automate the management of your data stream’s backing indices. {{ilm-init}} requires an index lifecycle policy.
+If you chose {{ilm-init}}, create an index lifecycle policy before you create your index template.
 
-:::{admonition} Simpler lifecycle management in {{serverless-short}} projects
-{{ilm-init}} lets you automatically transition indices through data tiers according to your performance needs and retention requirements. This allows you to balance hardware costs with performance. {{ilm-init}} is not available in {{serverless-short}}, where  performance optimizations are automatic. Instead, [data stream lifecycle](/manage-data/lifecycle/data-stream.md) is available as a data management option.
+:::{admonition} Lifecycle management in {{serverless-short}} projects
+{{ilm-init}} is not available in {{serverless-short}}. Use [data stream lifecycle](/manage-data/lifecycle/data-stream.md) instead.
 :::
 
 To create an index lifecycle policy in {{kib}}:
@@ -99,7 +108,6 @@ PUT _ilm/policy/my-lifecycle-policy
 }
 ```
 
-
 ## Create component templates [create-component-templates]
 
 A data stream requires a matching index template. In most cases, you compose this index template using one or more component templates. You typically use separate component templates for mappings and index settings. This lets you reuse the component templates in multiple index templates.
@@ -107,7 +115,7 @@ A data stream requires a matching index template. In most cases, you compose thi
 When creating your component templates, include:
 
 * A [`date`](elasticsearch://reference/elasticsearch/mapping-reference/date.md) or [`date_nanos`](elasticsearch://reference/elasticsearch/mapping-reference/date_nanos.md) mapping for the `@timestamp` field. If you don’t specify a mapping, {{es}} maps `@timestamp` as a `date` field with default options.
-* Your lifecycle policy in the `index.lifecycle.name` index setting.
+* If you chose {{ilm-init}}, your lifecycle policy in the `index.lifecycle.name` index setting. If you chose data stream lifecycle, you configure retention in the index template instead.
 
 :::{tip}
 Use the [Elastic Common Schema (ECS)](ecs://reference/index.md) when mapping your fields. ECS fields integrate with several {{stack}} features by default.
@@ -157,7 +165,19 @@ PUT _component_template/my-mappings
 }
 ```
 
-To create a component template for index settings, use this request:
+::::{tab-set}
+:group: set-up-ds-lifecycle
+:::{tab-item} Data stream lifecycle
+:sync: dlm
+
+If you chose data stream lifecycle, you don't need a separate settings component template for lifecycle. Configure retention in the [index template](#create-index-template) instead.
+
+:::
+
+:::{tab-item} {{ilm-init}}
+:sync: ilm
+
+If you chose {{ilm-init}}, create a component template for index settings that references your lifecycle policy:
 
 ```console
 PUT _component_template/my-settings
@@ -174,17 +194,22 @@ PUT _component_template/my-settings
 }
 ```
 
+:::
+::::
+
 ::: 
 ::::
 
 ## Create an index template [create-index-template]
 
-Use your component templates to create an index template. Specify:
+Use your component templates to create an index template. Every index template must specify:
 
 * One or more index patterns that match the data stream’s name. We recommend using our [data stream naming scheme](/reference/fleet/data-streams.md#data-streams-naming-scheme).
 * That the template is data stream enabled.
-* Any component templates that contain your mappings and index settings.
+* Component templates or inline definitions for your mappings.
 * A priority higher than `200` to avoid collisions with built-in templates. See [Avoid index pattern collisions](../templates.md#avoid-index-pattern-collisions).
+
+Depending on your lifecycle choice, also include either a `lifecycle` object in the template (data stream lifecycle) or a component template that sets `index.lifecycle.name` ({{ilm-init}}).
 
 ::::{tab-set}
 :group: set-up-ds
@@ -204,7 +229,48 @@ Use an API to create an index template:
 * In an {{stack}} deployment, use the [create an index template]({{es-apis}}operation/operation-indices-put-index-template) API.
 * In {{serverless-full}}, use the [create an index template]({{es-serverless-apis}}operation/operation-indices-put-index-template) API.
 
-Include the `data_stream` object to enable data streams:
+Include the `data_stream` object to enable data streams. Use the tab that matches your lifecycle choice:
+
+::::{tab-set}
+:group: set-up-ds-lifecycle
+:::{tab-item} Data stream lifecycle
+:sync: dlm
+
+```console
+PUT _index_template/my-index-template
+{
+  "index_patterns": ["my-data-stream*"],
+  "data_stream": { },
+  "composed_of": [ "my-mappings" ],
+  "priority": 500,
+  "template": {
+    "lifecycle": {
+      "data_retention": "7d"
+    }
+  },
+  "_meta": {
+    "description": "Template for my time series data with data stream lifecycle"
+  }
+}
+```
+
+To verify lifecycle configuration after you create the stream, refer to [Creating a data stream with a lifecycle](/manage-data/lifecycle/data-stream/tutorial-create-data-stream-with-lifecycle.md#retrieve-lifecycle-information).
+
+:::{tip}
+:applies_to: {"stack": "ga 9.5", "serverless": "unavailable"}
+
+To move older backing indices to the frozen tier automatically, include `frozen_after` in the lifecycle you put on the template. For requirements and how conversion works, refer to [](/manage-data/lifecycle/data-stream/dlm-searchable-snapshots.md). Confirm that a default snapshot repository is registered before indexing data. Refer to [Manage snapshot repositories](/deploy-manage/tools/snapshot-and-restore/manage-snapshot-repositories.md).
+:::
+
+:::
+
+:::{tab-item} {{ilm-init}}
+:sync: ilm
+
+```{applies_to}
+stack: ga
+serverless: unavailable
+```
 
 ```console
 PUT _index_template/my-index-template
@@ -220,6 +286,9 @@ PUT _index_template/my-index-template
 }
 ```
 
+:::
+
+::::
 :::
 ::::
 
