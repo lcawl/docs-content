@@ -110,5 +110,7 @@ Due to the fact that multiple documents are compressed together into blocks, it 
 ## Define the lifecycle of your data [roll-up-historical-data]
 
 Keeping older data can be useful for later analysis but is often avoided due to storage costs.
+
 Create a [data lifecycle](/manage-data/lifecycle.md) strategy to specify when to move your data to cheaper storage tiers and when to delete it.
+
 You can also use [downsampling](/manage-data/data-store/data-streams/downsampling-time-series-data-stream.md) to summarize and store historical time series data at a fraction of the raw data storage cost.
