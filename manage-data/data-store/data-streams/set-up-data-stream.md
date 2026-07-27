@@ -27,7 +27,7 @@ If you use {{fleet}}, {{agent}}, or {{ls}}, skip this tutorial. They all set up 
 For {{fleet}} and {{agent}}, refer to [](/reference/fleet/data-streams.md). For {{ls}}, refer to the [data streams settings](logstash-docs-md://lsr/plugins-outputs-elasticsearch.md#plugins-outputs-elasticsearch-data_stream) for the `elasticsearch output` plugin.
 :::
 
-Lifecycle management is optional and configured on the index template. To compare options, refer to [Data lifecycle](/manage-data/lifecycle.md).
+Lifecycle management is optional but recommended. To compare options, refer to [Data lifecycle](/manage-data/lifecycle.md).
 
 * For {{ds-lifecycle}}, refer to [](/manage-data/lifecycle/data-stream/tutorial-create-data-stream-with-lifecycle.md).
 * For {{ilm}} ({{ilm-init}}), refer to [](/manage-data/lifecycle/index-lifecycle-management/configure-lifecycle-policy.md). {{ilm-init}} is not available in {{serverless-full}}; use {{ds-lifecycle}} instead.
