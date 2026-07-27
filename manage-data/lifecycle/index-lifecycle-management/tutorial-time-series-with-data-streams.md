@@ -7,7 +7,7 @@ products:
 
 # Manage time series data with data streams [manage-time-series-data-with-data-streams]
 
-For general data stream setup, including choosing data stream lifecycle instead of {{ilm-init}}, refer to [Set up a data stream](/manage-data/data-store/data-streams/set-up-data-stream.md). This tutorial focuses on automating rollover and management with {{ilm-init}}.
+For general data stream creation, refer to [Set up a data stream](/manage-data/data-store/data-streams/set-up-data-stream.md). To compare lifecycle options, refer to [Data lifecycle](/manage-data/lifecycle.md). This tutorial focuses on automating rollover and management with {{ilm-init}}.
 
 To automate rollover and management of a data stream with {{ilm-init}}, you:
 

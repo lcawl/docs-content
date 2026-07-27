@@ -11,16 +11,13 @@ products:
 # Set up a data stream [set-up-a-data-stream]
 
 The process of setting up a data stream in {{stack}} and {{serverless-full}} is similar, making use of their respective APIs.
-The main difference is how you manage the lifecycle: {{ilm}} is available on {{stack}} deployments only, while {{ds-lifecycle}} is available on both.
 
 To set up a data stream, follow these steps:
 
-1. [Choose lifecycle management](#choose-lifecycle-management)
-2. [Create an index lifecycle policy](#create-index-lifecycle-policy) {applies_to}`serverless: unavailable`
-3. [Create component templates](#create-component-templates)
-4. [Create an index template](#create-index-template)
-5. [Create the data stream](#create-data-stream)
-6. [Secure the data stream](#secure-data-stream)
+1. [Create component templates](#create-component-templates)
+2. [Create an index template](#create-index-template)
+3. [Create the data stream](#create-data-stream)
+4. [Secure the data stream](#secure-data-stream)
 
 You can also [convert an index alias to a data stream](#convert-index-alias-to-data-stream).
 
@@ -30,92 +27,20 @@ If you use {{fleet}}, {{agent}}, or {{ls}}, skip this tutorial. They all set up 
 For {{fleet}} and {{agent}}, refer to [](/reference/fleet/data-streams.md). For {{ls}}, refer to the [data streams settings](logstash-docs-md://lsr/plugins-outputs-elasticsearch.md#plugins-outputs-elasticsearch-data_stream) for the `elasticsearch output` plugin.
 :::
 
-## Choose lifecycle management [choose-lifecycle-management]
+:::{note}
+Lifecycle management is optional and configured on the index template. To compare options, refer to [Data lifecycle](/manage-data/lifecycle.md).
 
-Before you create templates, decide how you want to manage your data stream's backing indices.
-Refer to [Data lifecycle](/manage-data/lifecycle.md) for a full comparison of your options.
-
-* {{ds-lifecycle-cap}}: Prefer this option when you mainly need retention, rollover, and storage optimization without configuring data tiers. It is available on {{stack}} and {{serverless-full}}.
-* {{ilm-cap}} ({{ilm-init}}): Use this option on {{stack}} when you need to transition backing indices through data tiers and configure richer phase actions, such as shrink, force merge, and {{search-snaps}} per tier.
-
-Your choice affects subsequent steps in this tutorial.
-
-## Create an index lifecycle policy [create-index-lifecycle-policy]
-
-```{applies_to}
-serverless: unavailable
-```
-
-If you chose to use {{ilm-init}}, create an index lifecycle policy before you create your index template.
-
-To create an index lifecycle policy in {{kib}}:
-
-1. Go to the **Index Lifecycle Policies** management page using the navigation menu or the [global search field](/explore-analyze/find-and-organize/find-apps-and-objects.md).
-1. Click **Create policy**.
-
-You can also use the [create lifecycle policy API]({{es-apis}}operation/operation-ilm-put-lifecycle).
-
-```console
-PUT _ilm/policy/my-lifecycle-policy
-{
-  "policy": {
-    "phases": {
-      "hot": {
-        "actions": {
-          "rollover": {
-            "max_primary_shard_size": "50gb"
-          }
-        }
-      },
-      "warm": {
-        "min_age": "30d",
-        "actions": {
-          "shrink": {
-            "number_of_shards": 1
-          },
-          "forcemerge": {
-            "max_num_segments": 1
-          }
-        }
-      },
-      "cold": {
-        "min_age": "60d",
-        "actions": {
-          "searchable_snapshot": {
-            "snapshot_repository": "found-snapshots"
-          }
-        }
-      },
-      "frozen": {
-        "min_age": "90d",
-        "actions": {
-          "searchable_snapshot": {
-            "snapshot_repository": "found-snapshots"
-          }
-        }
-      },
-      "delete": {
-        "min_age": "735d",
-        "actions": {
-          "delete": {}
-        }
-      }
-    }
-  }
-}
-```
+* For {{ds-lifecycle}}, refer to [Creating a data stream with a lifecycle](/manage-data/lifecycle/data-stream/tutorial-create-data-stream-with-lifecycle.md).
+* For {{ilm-init}}, refer to [Create an {{ilm-init}} policy](/manage-data/lifecycle/index-lifecycle-management/configure-lifecycle-policy.md). {{ilm-init}} is not available in {{serverless-short}}; use {{ds-lifecycle}} instead.
+:::
 
 ## Create component templates [create-component-templates]
 
-A data stream requires a matching index template.
-In most cases, you compose this index template using one or more component templates.
-You typically use separate component templates for mappings and index settings.
-This method lets you reuse the component templates in multiple index templates.
+A data stream requires a matching index template. In most cases, you compose this index template using one or more component templates. You typically use separate component templates for mappings and index settings. This lets you reuse the component templates in multiple index templates.
 
-When creating your component templates, include a [`date`](elasticsearch://reference/elasticsearch/mapping-reference/date.md) or [`date_nanos`](elasticsearch://reference/elasticsearch/mapping-reference/date_nanos.md) mapping for the `@timestamp` field.
-If you don’t specify a mapping, {{es}} maps `@timestamp` as a `date` field with default options.
+Component templates are optional. You can define mappings and settings directly in the index template instead.
 
-If you chose to use {{ilm-init}}, include your lifecycle policy in the `index.lifecycle.name` index setting.
+When creating your component templates, include a [`date`](elasticsearch://reference/elasticsearch/mapping-reference/date.md) or [`date_nanos`](elasticsearch://reference/elasticsearch/mapping-reference/date_nanos.md) mapping for the `@timestamp` field. If you don’t specify a mapping, {{es}} maps `@timestamp` as a `date` field with default options.
 
 :::{tip}
 Use the [Elastic Common Schema (ECS)](ecs://reference/index.md) when mapping your fields. ECS fields integrate with several {{stack}} features by default.
@@ -165,61 +90,37 @@ PUT _component_template/my-mappings
 }
 ```
 
-If you chose to use {{ilm-init}}, create a component template for index settings that references your lifecycle policy:
-
-```console
-PUT _component_template/my-settings
-{
-  "template": {
-    "settings": {
-      "index.lifecycle.name": "my-lifecycle-policy"
-    }
-  },
-  "_meta": {
-    "description": "Settings for ILM",
-    "my-custom-meta-field": "More arbitrary metadata"
-  }
-}
-```
-
 :::
 ::::
 
 ## Create an index template [create-index-template]
 
-Use your component templates to create an index template. Every index template must specify:
+Use your component templates to create an index template. Specify:
 
-* One or more index patterns that match the data stream's name.
-We recommend using our [data stream naming scheme](/reference/fleet/data-streams.md#data-streams-naming-scheme).
+* One or more index patterns that match the data stream’s name. We recommend using our [data stream naming scheme](/reference/fleet/data-streams.md#data-streams-naming-scheme).
 * That the template is data stream enabled.
-* Component templates or inline definitions for your mappings.
+* Any component templates that contain your mappings and index settings, or define mappings and settings inline in the template.
 * A priority higher than `200` to avoid collisions with built-in templates. See [Avoid index pattern collisions](../templates.md#avoid-index-pattern-collisions).
 
-Depending on your lifecycle choice, also include either a `lifecycle` object in the template ({{ds-lifecycle}}) or a component template that sets `index.lifecycle.name` ({{ilm}}).
-
-::::::{tab-set}
+::::{tab-set}
 :group: set-up-ds
-:::::{tab-item} {{kib}}
+:::{tab-item} {{kib}}
 :sync: kibana
 To create an index template in {{kib}}:
 
 1. Go to the **{{index-manage-app}}** page using the navigation menu or the [global search field](/explore-analyze/find-and-organize/find-apps-and-objects.md).
 1. In the **Index Templates** tab, click **Create template**.
-:::::
 
-:::::{tab-item} API
+:::
+
+:::{tab-item} API
 :sync: api
 Use an API to create an index template:
 
 * In an {{stack}} deployment, use the [create an index template]({{es-apis}}operation/operation-indices-put-index-template) API.
 * In {{serverless-full}}, use the [create an index template]({{es-serverless-apis}}operation/operation-indices-put-index-template) API.
 
-Include the `data_stream` object to enable data streams. Use the tab that matches your lifecycle choice:
-
-::::{tab-set}
-:group: set-up-ds-lifecycle
-:::{tab-item} {{ds-lifecycle-cap}}
-:sync: dlm
+Include the `data_stream` object to enable data streams:
 
 ```console
 PUT _index_template/my-index-template
@@ -228,48 +129,15 @@ PUT _index_template/my-index-template
   "data_stream": { },
   "composed_of": [ "my-mappings" ],
   "priority": 500,
-  "template": {
-    "lifecycle": {
-      "data_retention": "7d"
-    }
-  },
-  "_meta": {
-    "description": "Template for my time series data with data stream lifecycle"
-  }
-}
-```
-
-To verify the configuration, refer to [Creating a data stream with a lifecycle](/manage-data/lifecycle/data-stream/tutorial-create-data-stream-with-lifecycle.md#retrieve-lifecycle-information).
-
-To move older backing indices to the frozen tier automatically, include `frozen_after` in the lifecycle. {applies_to}`stack: ga 9.5+` {applies_to}`serverless: unavailable`
-For requirements and how conversion works, refer to [](/manage-data/lifecycle/data-stream/dlm-searchable-snapshots.md).
-:::
-
-:::{tab-item} {{ilm-cap}}
-:sync: ilm
-
-```{applies_to}
-stack: ga
-serverless: unavailable
-```
-
-```console
-PUT _index_template/my-index-template
-{
-  "index_patterns": ["my-data-stream*"],
-  "data_stream": { },
-  "composed_of": [ "my-mappings", "my-settings" ],
-  "priority": 500,
   "_meta": {
     "description": "Template for my time series data",
     "my-custom-meta-field": "More arbitrary metadata"
   }
 }
 ```
+
 :::
 ::::
-:::::
-::::::
 
 ## Create the data stream [create-data-stream]
 
@@ -375,7 +243,7 @@ To delete a data stream and its backing indices in {{kib}}:
 1. Go to the **Index Management** page using the navigation menu or the [global search field](/explore-analyze/find-and-organize/find-apps-and-objects.md).
 1. In the **Data Streams** view, click the trash can icon. The icon only displays if you have the `delete_index` security privilege for the data stream.
 
-::: 
+:::
 :::{tab-item} API
 :sync: api
 
