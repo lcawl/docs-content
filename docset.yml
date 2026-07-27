@@ -230,6 +230,8 @@ subs:
   ilm-cap:   "Index lifecycle management"
   ilm-init:   "ILM"
   dlm-init:   "DLM"
+  ds-lifecycle:   "data stream lifecycle"
+  ds-lifecycle-cap:   "Data stream lifecycle"
   search-snap:   "searchable snapshot"
   search-snaps:   "searchable snapshots"
   search-snaps-cap:   "Searchable snapshots"

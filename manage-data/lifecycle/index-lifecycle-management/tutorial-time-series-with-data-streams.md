@@ -7,6 +7,8 @@ products:
 
 # Manage time series data with data streams [manage-time-series-data-with-data-streams]
 
+For general data stream creation, refer to [Set up a data stream](/manage-data/data-store/data-streams/set-up-data-stream.md). To compare lifecycle options, refer to [Data lifecycle](/manage-data/lifecycle.md). This tutorial focuses on automating rollover and management with {{ilm-init}}.
+
 To automate rollover and management of a data stream with {{ilm-init}}, you:
 
 1. [Create a lifecycle policy](/manage-data/lifecycle/index-lifecycle-management/tutorial-time-series-with-data-streams.md#ilm-gs-create-policy) that defines the appropriate [phases](index-lifecycle.md) and [actions](elasticsearch://reference/elasticsearch/index-lifecycle-actions/index.md).

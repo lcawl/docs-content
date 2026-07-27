@@ -10,7 +10,9 @@ products:
 
 # Creating a data stream with a lifecycle [tutorial-manage-new-data-stream]
 
-Follow these steps to create an {{es}} data stream with a configured lifecycle. Learn how to set the retention period for your data and to retrieve the lifecycle configuration details.
+Follow these steps to create an {{es}} data stream with a configured {{ds-lifecycle}}. Learn how to set the retention period for your data and to retrieve the lifecycle configuration details.
+
+For generic data stream setup without lifecycle, including component templates and securing the stream, refer to [Set up a data stream](/manage-data/data-store/data-streams/set-up-data-stream.md). To compare lifecycle options, refer to [Data lifecycle](/manage-data/lifecycle.md).
 
 1. [Create an index template](#create-index-template-with-lifecycle)
 1. [Create a data stream](#create-data-stream-with-lifecycle)
@@ -98,6 +100,8 @@ You can create a data stream in these ways:
     1. From the upper right, select **Create classic stream**.
     1. Select the index template you want to use, name your stream, and select **Create**.
 
+When a write operation with the name of your data stream reaches {{es}}, the data stream is created with the respective data stream lifecycle. For more ways to create and manage streams, refer to [Create the data stream](/manage-data/data-store/data-streams/set-up-data-stream.md#create-data-stream).
+
 ## Retrieve lifecycle information [retrieve-lifecycle-information]
 
 You can use the [get data stream lifecycle API]({{es-apis}}operation/operation-indices-get-data-lifecycle) to see the data stream lifecycle of your data stream and the [explain data stream lifecycle API]({{es-apis}}operation/operation-indices-explain-data-lifecycle) to see the exact state of each backing index.
@@ -129,7 +133,6 @@ The result will look like this:
 2. Shows if the data stream lifecycle is enabled for this data stream.
 3. The retention period of the data indexed in this data stream, as configured by the user.
 4. The retention period that will be applied by the data stream lifecycle. This means that the data in this data stream will be kept at least for 7 days. After that {{es}} can delete it at its own discretion.
-
 
 If you want to see more information about how the data stream lifecycle is applied on individual backing indices use the [explain data stream lifecycle API]({{es-apis}}operation/operation-indices-explain-data-lifecycle):
 
