@@ -27,12 +27,10 @@ If you use {{fleet}}, {{agent}}, or {{ls}}, skip this tutorial. They all set up 
 For {{fleet}} and {{agent}}, refer to [](/reference/fleet/data-streams.md). For {{ls}}, refer to the [data streams settings](logstash-docs-md://lsr/plugins-outputs-elasticsearch.md#plugins-outputs-elasticsearch-data_stream) for the `elasticsearch output` plugin.
 :::
 
-:::{note}
 Lifecycle management is optional and configured on the index template. To compare options, refer to [Data lifecycle](/manage-data/lifecycle.md).
 
-* For {{ds-lifecycle}}, refer to [Creating a data stream with a lifecycle](/manage-data/lifecycle/data-stream/tutorial-create-data-stream-with-lifecycle.md).
-* For {{ilm-init}}, refer to [Create an {{ilm-init}} policy](/manage-data/lifecycle/index-lifecycle-management/configure-lifecycle-policy.md). {{ilm-init}} is not available in {{serverless-short}}; use {{ds-lifecycle}} instead.
-:::
+* For {{ds-lifecycle}}, refer to [](/manage-data/lifecycle/data-stream/tutorial-create-data-stream-with-lifecycle.md).
+* For {{ilm}} ({{ilm-init}}), refer to [](/manage-data/lifecycle/index-lifecycle-management/configure-lifecycle-policy.md). {{ilm-init}} is not available in {{serverless-full}}; use {{ds-lifecycle}} instead.
 
 ## Create component templates [create-component-templates]
 
@@ -40,12 +38,12 @@ A data stream requires a matching index template. In most cases, you compose thi
 
 Component templates are optional. You can define mappings and settings directly in the index template instead.
 
-When creating your component templates, include a [`date`](elasticsearch://reference/elasticsearch/mapping-reference/date.md) or [`date_nanos`](elasticsearch://reference/elasticsearch/mapping-reference/date_nanos.md) mapping for the `@timestamp` field. If you don’t specify a mapping, {{es}} maps `@timestamp` as a `date` field with default options.
+When creating your component templates, include a [`date`](elasticsearch://reference/elasticsearch/mapping-reference/date.md) or [`date_nanos`](elasticsearch://reference/elasticsearch/mapping-reference/date_nanos.md) mapping for the `@timestamp` field. If you don't specify a mapping, {{es}} maps `@timestamp` as a `date` field with default options.
 
 :::{tip}
 Use the [Elastic Common Schema (ECS)](ecs://reference/index.md) when mapping your fields. ECS fields integrate with several {{stack}} features by default.
 
-If you’re unsure how to map your fields, use [runtime fields](../mapping/define-runtime-fields-in-search-request.md) to extract fields from [unstructured content](elasticsearch://reference/elasticsearch/mapping-reference/keyword.md#mapping-unstructured-content) at search time. For example, you can index a log message to a `wildcard` field and later extract IP addresses and other data from this field during a search.
+If you're unsure how to map your fields, use [runtime fields](../mapping/define-runtime-fields-in-search-request.md) to extract fields from [unstructured content](elasticsearch://reference/elasticsearch/mapping-reference/keyword.md#mapping-unstructured-content) at search time. For example, you can index a log message to a `wildcard` field and later extract IP addresses and other data from this field during a search.
 :::
 
 ::::{tab-set}
@@ -97,7 +95,7 @@ PUT _component_template/my-mappings
 
 Use your component templates to create an index template. Specify:
 
-* One or more index patterns that match the data stream’s name. We recommend using our [data stream naming scheme](/reference/fleet/data-streams.md#data-streams-naming-scheme).
+* One or more index patterns that match the data stream's name. We recommend using our [data stream naming scheme](/reference/fleet/data-streams.md#data-streams-naming-scheme).
 * That the template is data stream enabled.
 * Any component templates that contain your mappings and index settings, or define mappings and settings inline in the template.
 * A priority higher than `200` to avoid collisions with built-in templates. See [Avoid index pattern collisions](../templates.md#avoid-index-pattern-collisions).
@@ -148,7 +146,7 @@ You can also create classic streams directly in the [**Streams**](/solutions/obs
 
 [Indexing requests](../data-streams/use-data-stream.md#add-documents-to-a-data-stream) add documents to a data stream. These requests must use an `op_type` of `create`. Documents must include a `@timestamp` field.
 
-To automatically create your data stream, submit an indexing request that targets the stream’s name. This name must match one of your index template’s index patterns.
+To automatically create your data stream, submit an indexing request that targets the stream's name. This name must match one of your index template's index patterns.
 
 ```console
 PUT my-data-stream/_bulk
@@ -182,7 +180,7 @@ For an example, refer to [Data stream privileges](../../../deploy-manage/users-r
 
 ## Convert an index alias to a data stream [convert-index-alias-to-data-stream]
 
-Prior to {{es}} 7.9, you’d typically use an index alias with a write index to manage time series data. Data streams replace this functionality, require less maintenance, and automatically integrate with [data tiers](../../lifecycle/data-tiers.md).
+Prior to {{es}} 7.9, you'd typically use an index alias with a write index to manage time series data. Data streams replace this functionality, require less maintenance, and automatically integrate with [data tiers](../../lifecycle/data-tiers.md).
 
 You can convert an index alias with a write index to a data stream with the same name, using an API:
 
@@ -206,7 +204,7 @@ You can review metadata about each data stream using the {{kib}} UI (visual over
 To get information about a data stream in {{kib}}:
 
 1. Go to the **Index Management** page using the navigation menu or the [global search field](/explore-analyze/find-and-organize/find-apps-and-objects.md).
-1. In the **Data Streams** tab, click the data stream’s name.
+1. In the **Data Streams** tab, click the data stream's name.
 
 :::{tip}
 :applies_to: {"stack": "ga 9.2, preview 9.1", "serverless": "ga"}
