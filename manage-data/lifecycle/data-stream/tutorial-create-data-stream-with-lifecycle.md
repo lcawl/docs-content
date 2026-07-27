@@ -10,17 +10,19 @@ products:
 
 # Creating a data stream with a lifecycle [tutorial-manage-new-data-stream]
 
-This page shows how to configure data stream lifecycle on a new data stream and how to retrieve lifecycle details after creation. For the full setup flow, including component templates, creating the stream, and securing it, refer to [Set up a data stream](/manage-data/data-store/data-streams/set-up-data-stream.md).
+Follow these steps to create an {{es}} data stream with a configured {{ds-lifecycle}}. Learn how to set the retention period for your data and to retrieve the lifecycle configuration details.
 
-1. [Add lifecycle to the index template](#create-index-template-with-lifecycle)
-1. [Create the data stream](#create-data-stream-with-lifecycle)
+For generic data stream setup without lifecycle, including component templates and securing the stream, refer to [Set up a data stream](/manage-data/data-store/data-streams/set-up-data-stream.md). To compare lifecycle options, refer to [Data lifecycle](/manage-data/lifecycle.md).
+
+1. [Create an index template](#create-index-template-with-lifecycle)
+1. [Create a data stream](#create-data-stream-with-lifecycle)
 1. [Retrieve lifecycle information](#retrieve-lifecycle-information)
 
-## Add lifecycle to the index template [create-index-template-with-lifecycle]
+## Create an index template [create-index-template-with-lifecycle]
 
-A data stream requires a matching [index template](../../data-store/templates.md). You configure data stream lifecycle by setting the `lifecycle` field in the index template, the same as you do for mappings and index settings.
-
-Define an index template that sets a lifecycle as follows:
+A data stream requires a matching [index template](../../data-store/templates.md).
+You can configure the data stream lifecycle by setting the `lifecycle` field in the index template the same as you do for mappings and index settings.
+You can define an index template that sets a lifecycle as follows:
 
 * Include the `data_stream` object to enable data streams.
 * Define the lifecycle in the template section or include a composable template that defines the lifecycle.
@@ -46,8 +48,6 @@ PUT _index_template/my-index-template
 ```
 
 1. In this case the index template will be applied to a data stream named `my-data-stream-test`. You can optionally use a wildcard (`*`) in the index pattern to match all data streams created (either manually or using an indexing request) that have a name matching the specified pattern.
-
-For a complete index template example with mappings and lifecycle tabs, refer to [Create an index template](/manage-data/data-store/data-streams/set-up-data-stream.md#create-index-template).
 
 :::{tip}
 :applies_to: {"stack": "ga 9.5", "serverless": "unavailable"}
@@ -75,11 +75,32 @@ PUT _index_template/my-index-template
 Confirm that a default snapshot repository is registered before indexing data. Refer to [Manage snapshot repositories](/deploy-manage/tools/snapshot-and-restore/manage-snapshot-repositories.md).
 :::
 
-## Create the data stream [create-data-stream-with-lifecycle]
+## Create a data stream [create-data-stream-with-lifecycle]
 
-After you create an index template with data stream lifecycle, create the data stream using the same steps as any other data stream. Refer to [Create the data stream](/manage-data/data-store/data-streams/set-up-data-stream.md#create-data-stream).
+You can create a data stream in these ways:
 
-When a write operation with the name of your data stream reaches {{es}}, the data stream is created with the respective data stream lifecycle.
+* By manually creating the stream using the [create data stream API]({{es-apis}}operation/operation-indices-create-data-stream). The stream's name must still match one of your template's index patterns.
+
+    ```console
+    PUT _data_stream/my-data-stream-test
+    ```
+
+* By [indexing requests](../../data-store/data-streams/use-data-stream.md#add-documents-to-a-data-stream) that target the stream's name. This name must match one of your index template's index patterns.
+
+    ```console
+    PUT my-data-stream-test/_bulk
+    { "create":{ } }
+    { "@timestamp": "2099-05-06T16:21:15.000Z", "message": "192.0.2.42 - - [06/May/2099:16:21:15 +0000] \"GET /images/bg.jpg HTTP/1.0\" 200 24736" }
+    { "create":{ } }
+    { "@timestamp": "2099-05-06T16:25:42.000Z", "message": "192.0.2.255 - - [06/May/2099:16:25:42 +0000] \"GET /favicon.ico HTTP/1.0\" 200 3638" }
+    ```
+
+* {applies_to}`stack: ga 9.3+` You can create a classic stream directly in the [**Streams**](/solutions/observability/streams/streams.md) UI in {{kib}}.
+    1. Go to the **Streams** page using the navigation menu or the [global search field](/explore-analyze/find-and-organize/find-apps-and-objects.md).
+    1. From the upper right, select **Create classic stream**.
+    1. Select the index template you want to use, name your stream, and select **Create**.
+
+When a write operation with the name of your data stream reaches {{es}}, the data stream is created with the respective data stream lifecycle. For more ways to create and manage streams, refer to [Create the data stream](/manage-data/data-store/data-streams/set-up-data-stream.md#create-data-stream).
 
 ## Retrieve lifecycle information [retrieve-lifecycle-information]
 
