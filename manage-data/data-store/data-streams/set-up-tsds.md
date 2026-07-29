@@ -166,7 +166,12 @@ If you're using component templates with a time series data stream, check the fo
 After creating the index template, you can create a time series data stream by [indexing a document](use-data-stream.md#add-documents-to-a-data-stream). The TSDS is created automatically when you index the first document, as long as the index name matches the index template pattern. You can use a bulk API request or a POST request.
 
 :::{important}
-To test the following `_bulk` example, update the timestamps to within two hours of your current time. Data added to a TSDS must fit the [accepted time range](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-accepted-time-range) of a backing index that covers the timestamp. {applies_to}`stack: ga 9.5` {applies_to}`serverless: ga` If no backing index exists yet for a timestamp, the write is rejected unless [past-index creation](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-backfill-past-timestamps) is enabled and the timestamp is inside the [eligible write window](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-eligible-write-window).
+To test the following `_bulk` example, update the timestamps to within two hours of your current time.
+This update is required because:
+
+- {applies_to}`stack: ga 9.0-9.2` Data added to a TSDS must fit the [accepted time range](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-accepted-time-range).
+- {applies_to}`stack: ga 9.5` {applies_to}`serverless: ga` When the backing index does not exist yet for a timestamp, the write is rejected unless [past-index creation](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-backfill-past-timestamps) is enabled and the timestamp is inside the [eligible write window](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-eligible-write-window).
+
 :::
 
 ```console
@@ -232,7 +237,7 @@ POST metrics-weather-sensors/_rollover
 ```
 
 :::{note}
-After the rollover, new backing indices will have time series functionality. Existing backing indices are not affected by the rollover (because their `index.mode` cannot be changed).
+After the rollover, new backing indices will have time series functionality. Existing backing indices are not affected by the rollover because their `index.mode` cannot be changed.
 :::
 
 ### Secure a time series data stream [secure-tsds]
