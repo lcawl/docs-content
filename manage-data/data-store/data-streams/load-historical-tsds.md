@@ -13,11 +13,12 @@ In {{stack}} 9.5 and {{es-serverless}}, you can load historical metrics into an 
 
 Late-arriving documents that fall in an existing backing index's accepted time range can already be indexed without this feature. This guide is for *true historical backfill*: timestamps that no existing backing index can accept. When past backing index creation is enabled, {{es}} creates the past backing indices needed to store those documents as they arrive. Write-time deduplication and TSDS storage optimizations apply to historical data the same way they apply to live data.
 
-Before you begin, review [Time ranges for adding data](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-accepted-time-range) and [Backfill past timestamps](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-backfill-past-indices). This guide assumes past-index creation is enabled.
+Before you begin, review [Time bound indices](/manage-data/data-store/data-streams/time-bound-tsds.md).
 
-## Enable past-index creation
+## Turn on past index creation
 
-Past backing index creation is disabled by default. Enable it at the cluster level:
+The [`data_stream.past_tsdb_index_creation_enabled`](elasticsearch://reference/elasticsearch/configuration-reference/miscellaneous-cluster-settings.md#time-series-data-stream) cluster setting is turned off by default.
+Enable it at the cluster level:
 
 ```console
 PUT _cluster/settings
@@ -151,16 +152,16 @@ When you enable lifecycle on a data stream with many indices that qualify for do
 
 ## Limitations and prerequisites
 
-Backfill and past-index creation have the following limitations:
+Backfill and creation of past indices have the following limitations:
 
 - The TSDS must already exist with at least one time series backing index.
-- Past-index creation does not apply to read-only backing indices. If downsampling or a {{search-snap}} transition has already run on a time period, documents for that period are still rejected.
+- Past index creation does not apply to read-only backing indices. If downsampling or a {{search-snap}} transition has already run on a time period, documents for that period are still rejected.
 - System data streams are excluded.
 - {{ccr-cap}} ({{ccr-init}}) follower data streams rely on the leader data stream, so you can't backfill follower streams directly.
-- Users who trigger past-index creation need the `auto_configure` index privilege. For details, refer to [Secure a time series data stream](/manage-data/data-store/data-streams/set-up-tsds.md#secure-tsds).
+- Users who trigger past index creation need the `auto_configure` index privilege. For details, refer to [Secure a time series data stream](/manage-data/data-store/data-streams/set-up-tsds.md#secure-tsds).
 
 ## Next steps
 
-- [Time-bound indices](/manage-data/data-store/data-streams/time-bound-tsds.md) for eligible write window and past-index creation details
+- [Time-bound indices](/manage-data/data-store/data-streams/time-bound-tsds.md) for eligible write window and past windex creation details
 - [Downsampling a time series data stream](/manage-data/data-store/data-streams/downsampling-time-series-data-stream.md) to reduce storage after historical data ages
 - [Reindex a time series data stream](/manage-data/data-store/data-streams/reindex-tsds.md) if you need to copy data to a new TSDS instead of backfilling in place

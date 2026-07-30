@@ -17,12 +17,13 @@ This page shows you how to manually set up a [time series data stream](/manage-d
 
 - Before you create a time series data stream, review [](../data-streams.md) and [TSDS concepts](time-series-data-stream-tsds.md). You can also try the [quickstart](/manage-data/data-store/data-streams/quickstart-tsds.md) for a hands-on introduction.
 - Make sure you have the following permissions:
-    - [Cluster privileges](elasticsearch://reference/elasticsearch/security-privileges.md#privileges-list-cluster)
-        - `manage_index_templates` for creating a template to base the TSDS on
-        - {applies_to}`stack: ga` `manage_ilm` if you're using [index lifecycle management](#tsds-ilm-policy)
-    - [Index privileges](elasticsearch://reference/elasticsearch/security-privileges.md#privileges-list-indices) 
-        - `create_doc` and `create_index` for creating or converting a TSDS
-        - `manage` to [roll over](#convert-existing-data-stream-to-tsds) a TSDS
+  - [Cluster privileges](elasticsearch://reference/elasticsearch/security-privileges.md#privileges-list-cluster)
+    - `manage_index_templates` for creating a template to base the TSDS on
+    - {applies_to}`stack: ga` `manage_ilm` if you're using [index lifecycle management](#tsds-ilm-policy)
+  - [Index privileges](elasticsearch://reference/elasticsearch/security-privileges.md#privileges-list-indices) 
+    - `create_doc` and `create_index` for creating or converting a TSDS
+    - `manage` to [roll over](#convert-existing-data-stream-to-tsds) a TSDS
+    - `auto_configure` if you choose to turn on creation of past backing indices
 
 ::::{note}
 If you're working with OpenTelemetry data, try the [OpenTelemetry quickstarts](/solutions/observability/get-started/opentelemetry/quickstart/index.md).
@@ -160,7 +161,7 @@ If you're using component templates with a time series data stream, check the fo
 
 ::::
 
-::::{step} Enable past-index creation (optional)
+::::{step} Turn on creation of past indices (optional)
 ```{applies_to}
 stack: ga 9.5+
 serverless: ga
@@ -172,8 +173,8 @@ To enable this feature, update the cluster settings:
 PUT _cluster/settings
 {
   "persistent": {
-    "data_stream.past_tsdb_index_creation_enabled": true
-    "data_streams.past_tsdb_index_interval": 1d <1>
+    "data_stream.past_tsdb_index_creation_enabled": true,
+    "data_streams.past_tsdb_index_interval": "1d" <1>
   }
 }
 ```
@@ -266,7 +267,8 @@ To control access to a TSDS, use [index privileges](elasticsearch://reference/el
 
 For an example, refer to [Data stream privileges](/deploy-manage/users-roles/cluster-or-deployment-auth/granting-privileges-for-data-streams-aliases.md#data-stream-privileges).
 
-{applies_to}`stack: ga 9.5` {applies_to}`serverless: ga` When [past-index creation](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-backfill-past-indices) is enabled, users who write documents that trigger creation of past backing indices need the `auto_configure` index privilege on the data stream, in addition to privileges that allow indexing (such as `create_doc` or `index`). Users with only the `index` privilege receive a `security_exception` when a write would create a past backing index.
+{applies_to}`stack: ga 9.5` {applies_to}`serverless: ga` Users who write documents that trigger creation of [past backing indices](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-past-index-creation) need the `auto_configure` index privilege on the data stream, in addition to privileges that allow indexing (such as `create_doc` or `index`).
+Users with only the `index` privilege receive a `security_exception` when a write would create a past backing index.
 
 ## Next steps [set-up-tsds-whats-next]
 

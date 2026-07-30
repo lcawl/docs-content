@@ -14,15 +14,11 @@ This page provides details and best practices to help you work with time-bound i
 
 ## How time-bound indices work [tsds-accepted-time-range]
 
-Each TSDS backing index has a time range for accepted `@timestamp` values:
+Each TSDS backing index has a range of `@timestamp` values that it accepts, which are tracked in index settings.
+When the TSDS is created, the first backing index has the following range:
 
-- [`index.time_series.start_time`](elasticsearch://reference/elasticsearch/index-settings/time-series.md#index-time-series-start-time): The earliest accepted timestamp (inclusive)
-- [`index.time_series.end_time`](elasticsearch://reference/elasticsearch/index-settings/time-series.md#index-time-series-end-time): The latest accepted timestamp (exclusive)
-
-When the TSDS is created, the first backing index is sized around its creation time:
-
-- Its `index.time_series.start_time` is set to `now` minus the [`index.look_back_time`](elasticsearch://reference/elasticsearch/index-settings/time-series.md#index-look-back-time).
-- Its `index.time_series.end_time` is set to `now` plus [`index.look_ahead_time`](elasticsearch://reference/elasticsearch/index-settings/time-series.md#index-look-ahead-time).
+- Its [`index.time_series.start_time`](elasticsearch://reference/elasticsearch/index-settings/time-series.md#index-time-series-start-time), which is the earliest accepted timestamp (inclusive), is set to `now` minus the [`index.look_back_time`](elasticsearch://reference/elasticsearch/index-settings/time-series.md#index-look-back-time).
+- Its [`index.time_series.end_time`](elasticsearch://reference/elasticsearch/index-settings/time-series.md#index-time-series-end-time), which is the latest accepted timestamp (exclusive), is set to `now` plus [`index.look_ahead_time`](elasticsearch://reference/elasticsearch/index-settings/time-series.md#index-look-ahead-time).
 
 Thereafter, {{es}} automatically configures the settings for backing indices as part of the index creation and rollover process.
 Each new backing index starts at the previous index's `end_time` and extends further ahead using `look_ahead_time`.
@@ -42,7 +38,7 @@ GET _data_stream/my-tsds
 ```
 
 By default, if no existing backing index can accept a document's `@timestamp`, {{es}} rejects the document.
-{{es}} does not create missing past backing indices unless you [enable past-index creation](#tsds-backfill-past-indices).
+{{es}} does not create missing past backing indices unless you [turn on past index creation](#tsds-past-index-creation).
 
 ::::{tip}
 Writes might still be rejected even when a timestamp fits the accepted time range of a backing index. The following actions can affect the writable time range, either because they make a backing index read-only or remove it:
@@ -57,24 +53,21 @@ Writes might still be rejected even when a timestamp fits the accepted time rang
 {{ilm-cap}} will **not** proceed with running these actions until [`index.time_series.end_time`](elasticsearch://reference/elasticsearch/index-settings/time-series.md#index-time-series-end-time) has passed.
 ::::
 
-## Backfill past indices [tsds-backfill-past-indices]
+In addition to the concept of accepted time ranges for each backing index, there's a broader concept of an _eligible write window_.
+It is the period of time that extends from the present back to whichever comes first:
+
+- the first lifecycle action that makes a backing index read-only (such as [downsampling](/manage-data/data-store/data-streams/downsampling-time-series-data-stream.md) or a {{search-snap}} transition), or
+- the data stream retention limit (configured in a [data stream lifecycle](/manage-data/lifecycle/data-stream.md), for example)
+
+## Past index creation [tsds-past-index-creation]
 
 ```{applies_to}
 stack: ga 9.5
 serverless: ga
 ```
 
-In addition to the concept of accepted time ranges for each backing index, there's a broader concept of an _eligible write window_.
-It is the period of time that extends from the present back to the first lifecycle action that makes a backing index read-only (such as [downsampling](/manage-data/data-store/data-streams/downsampling-time-series-data-stream.md) or a {{search-snap}} transition) or to the configured retention limit, whichever comes first.
-<!-- TBD: Where is the retention limit configured? -->
-
 When the
 [data_stream.past_tsdb_index_creation_enabled](elasticsearch://reference/elasticsearch/configuration-reference/miscellaneous-cluster-settings.md#time-series-data-stream) cluster setting is set to `true`, {{es}} automatically creates missing past backing indices while indexing documents that fall within the eligible write window.
-
-:::{tip}
-To backfill past indices, you need the `auto_configure` index privilege on the data stream, in addition to privileges that allow indexing.
-If you have only the `index` privilege, you'll receive a `security_exception` when a write would have created a past backing index.
-:::
 
 Timestamps outside the eligible write window or in the future are still rejected.
 If a [failure store](/manage-data/data-store/data-streams/failure-store.md) is enabled, rejected timestamp failures can be redirected there.
