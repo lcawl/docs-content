@@ -31,7 +31,7 @@ If you're working with OpenTelemetry data, try the [OpenTelemetry quickstarts](/
 ## Set up a TSDS
 
 :::::{stepper}
-:::{step} Create an index lifecycle policy (optional)
+::::{step} Create an index lifecycle policy (optional)
 :anchor: tsds-ilm-policy
 
 ```{applies_to}
@@ -41,11 +41,11 @@ serverless: unavailable
 
 In most cases, you can use a [data stream lifecycle](/manage-data/lifecycle/data-stream.md) to manage your time series data stream. If you're using [data tiers](/manage-data/lifecycle/data-tiers.md) in {{stack}}, you can use [index lifecycle management](/manage-data/lifecycle/index-lifecycle-management.md).
 
-::::{note}
+:::{note}
 :applies_to: {"stack": "ga 9.5"}
 
 {{ilm-init}} isn't required for frozen-tier {{search-snaps}}. Data stream lifecycle can manage them directly. Refer to [](/manage-data/lifecycle/data-stream/dlm-searchable-snapshots.md).
-::::
+:::
 
 :::{dropdown} Create an ILM policy
 
@@ -75,9 +75,9 @@ PUT _ilm/policy/my-weather-sensor-lifecycle-policy
 ```
 
 :::
+::::
 
-
-::::{step} Create an index template 
+::::{step} Create an index template
 :anchor: create-tsds-index-template
 
 The structure of a time series data stream is defined by an index template. Create an index template with the following required elements and settings:
@@ -160,18 +160,38 @@ If you're using component templates with a time series data stream, check the fo
 
 ::::
 
+::::{step} Enable past-index creation (optional)
+```{applies_to}
+stack: ga 9.5+
+serverless: ga
+```
+{{es}} can create missing backing indices when you add data that precedes existing time ranges.
+To enable this feature, update the cluster settings:
+
+```console
+PUT _cluster/settings
+{
+  "persistent": {
+    "data_stream.past_tsdb_index_creation_enabled": true
+    "data_streams.past_tsdb_index_interval": 1d <1>
+  }
+}
+```
+
+1. The interval configuration is optional, refer to [`data_streams.past_tsdb_index_interval`](elasticsearch://reference/elasticsearch/configuration-reference/miscellaneous-cluster-settings.md#time-series-data-stream).
+
+::::
+
 ::::{step} Create the time series data stream and add data
 :anchor: create-tsds
 
-After creating the index template, you can create a time series data stream by [indexing a document](use-data-stream.md#add-documents-to-a-data-stream). The TSDS is created automatically when you index the first document, as long as the index name matches the index template pattern. You can use a bulk API request or a POST request.
+You can create a time series data stream by [indexing a document](use-data-stream.md#add-documents-to-a-data-stream).
+The TSDS is created automatically when you index the first document, as long as the index name matches the index template pattern.
+You can use a bulk API request or a POST request.
 
 :::{important}
 To test the following `_bulk` example, update the timestamps to within two hours of your current time.
-This update is required because:
-
-- {applies_to}`stack: ga 9.0-9.2` Data added to a TSDS must fit the [accepted time range](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-accepted-time-range).
-- {applies_to}`stack: ga 9.5` {applies_to}`serverless: ga` When the backing index does not exist yet for a timestamp, the write is rejected unless [past-index creation](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-backfill-past-timestamps) is enabled and the timestamp is inside the [eligible write window](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-eligible-write-window).
-
+This update is required because data added to a TSDS must fall within an existing backing index's [accepted time range](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-accepted-time-range). The first backing index is sized around creation time using `look_back_time` (default two hours) and `look_ahead_time`.
 :::
 
 ```console
@@ -221,7 +241,7 @@ GET metrics-prod/_search
 
 
 ::::
-
+:::::
 
 ## Advanced setup
 
@@ -246,7 +266,7 @@ To control access to a TSDS, use [index privileges](elasticsearch://reference/el
 
 For an example, refer to [Data stream privileges](/deploy-manage/users-roles/cluster-or-deployment-auth/granting-privileges-for-data-streams-aliases.md#data-stream-privileges).
 
-{applies_to}`stack: ga 9.5` {applies_to}`serverless: ga` When [past-index creation](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-backfill-past-timestamps) is enabled, users who write documents that trigger creation of past backing indices need the `auto_configure` index privilege on the data stream, in addition to privileges that allow indexing (such as `create_doc` or `index`). Users with only the `index` privilege receive a `security_exception` when a write would create a past backing index.
+{applies_to}`stack: ga 9.5` {applies_to}`serverless: ga` When [past-index creation](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-backfill-past-indices) is enabled, users who write documents that trigger creation of past backing indices need the `auto_configure` index privilege on the data stream, in addition to privileges that allow indexing (such as `create_doc` or `index`). Users with only the `index` privilege receive a `security_exception` when a write would create a past backing index.
 
 ## Next steps [set-up-tsds-whats-next]
 

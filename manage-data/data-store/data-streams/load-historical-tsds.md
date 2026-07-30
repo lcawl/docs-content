@@ -11,9 +11,9 @@ products:
 
 In {{stack}} 9.5 and {{es-serverless}}, you can load historical metrics into an existing [time series data stream (TSDS)](/manage-data/data-store/data-streams/time-series-data-stream-tsds.md) using the same APIs you use for live data. This includes the bulk API, the [OpenTelemetry Protocol (OTLP) endpoint](/manage-data/data-store/data-streams/tsds-ingest-otlp.md), and the [Prometheus remote write endpoint](/manage-data/data-store/data-streams/tsds-ingest-prometheus-remote-write.md).
 
-When past backing index creation is enabled, {{es}} creates the past backing indices needed to store historical documents as they arrive. Write-time deduplication and TSDS storage optimizations apply to historical data the same way they apply to live data.
+Late-arriving documents that fall in an existing backing index's accepted time range can already be indexed without this feature. This guide is for *true historical backfill*: timestamps that no existing backing index can accept. When past backing index creation is enabled, {{es}} creates the past backing indices needed to store those documents as they arrive. Write-time deduplication and TSDS storage optimizations apply to historical data the same way they apply to live data.
 
-Before you begin, review [Time-bound indices](/manage-data/data-store/data-streams/time-bound-tsds.md), especially the [eligible write window](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-eligible-write-window) and [backfill past timestamps](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-backfill-past-timestamps) sections.
+Before you begin, review [Time ranges for adding data](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-accepted-time-range) and [Backfill past timestamps](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-backfill-past-indices). This guide assumes past-index creation is enabled.
 
 ## Enable past-index creation
 
@@ -28,7 +28,7 @@ PUT _cluster/settings
 }
 ```
 
-For optional interval configuration, refer to [Configure past index intervals](/manage-data/data-store/data-streams/time-bound-tsds.md#configure-past-index-intervals).
+For optional interval configuration, refer to the [`data_streams.past_tsdb_index_interval`](elasticsearch://reference/elasticsearch/configuration-reference/miscellaneous-cluster-settings.md#time-series-data-stream) cluster setting.
 
 ## Load data into a new TSDS
 
@@ -52,7 +52,7 @@ PUT metrics-sensors/_bulk
 
 ## Load data within the eligible write window
 
-For data that falls within the [eligible write window](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-eligible-write-window), point your migration or replay pipeline at the live TSDS. {{es}} creates past backing indices as needed.
+For data that falls within the eligible write window, point your migration or replay pipeline at the live TSDS. {{es}} creates past backing indices as needed.
 
 This approach works well when you're backfilling recent history alongside live ingestion, such as late-arriving metrics or a short bootstrap period.
 
