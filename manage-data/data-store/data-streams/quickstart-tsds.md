@@ -200,7 +200,7 @@ The response shows five sample weather data documents.
 :::
 
 :::{tip}
-If you get an error about timestamp values, check the error response for the valid timestamp range. For more details, refer to [Time ranges for adding data](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-accepted-time-range).
+If you get an error about timestamp values, check the error response for the valid timestamp range. For more details, refer to [How time-bound indices work](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-accepted-time-range).
 
 :::
 

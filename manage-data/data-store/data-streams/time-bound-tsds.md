@@ -9,13 +9,13 @@ products:
 
 # Time-bound indices and dimension-based routing [time-bound-indices]
 
-Unlike regular data streams that only write to the most recent backing index, time series data streams (TSDS) use time-bound backing indices that accept documents based on their timestamp values.
-This page provides details and best practices to help you work with time-bound indices.
+Unlike regular data streams that write only to the most recent backing index, {{tsds}} ({{tsds-init}}) are backed by a set of time-bound indices, each covering a contiguous, non-overlapping time range.
+{{es}} enforces that the `@timestamp` for each ingested document falls within the time range of exactly one backing index.
 
 ## How time-bound indices work [tsds-accepted-time-range]
 
-Each TSDS backing index has a range of `@timestamp` values that it accepts, which are tracked in index settings.
-When the TSDS is created, the first backing index has the following range:
+Each {{tsds-init}} backing index has a range of `@timestamp` values that it accepts, which are tracked in index settings.
+When the {{tsds-init}} is created, the first backing index has the following range:
 
 - Its [`index.time_series.start_time`](elasticsearch://reference/elasticsearch/index-settings/time-series.md#index-time-series-start-time), which is the earliest accepted timestamp (inclusive), is set to `now` minus the [`index.look_back_time`](elasticsearch://reference/elasticsearch/index-settings/time-series.md#index-look-back-time).
 - Its [`index.time_series.end_time`](elasticsearch://reference/elasticsearch/index-settings/time-series.md#index-time-series-end-time), which is the latest accepted timestamp (exclusive), is set to `now` plus [`index.look_ahead_time`](elasticsearch://reference/elasticsearch/index-settings/time-series.md#index-look-ahead-time).
@@ -24,14 +24,14 @@ Thereafter, {{es}} automatically configures the settings for backing indices as 
 Each new backing index starts at the previous index's `end_time` and extends further ahead using `look_ahead_time`.
 
 When you add a document to the TSDS, {{es}} routes it to the appropriate backing index based on its `@timestamp` value.
-This means a TSDS can write to multiple backing indices simultaneously, not just the most recent one.
+This means a TSDS can write to multiple backing indices simultaneously, not only the most recent one.
 
 :::{image} /manage-data/images/elasticsearch-reference-time-bound-indices.svg
 :alt: Time bound indices
 :::
 
 Late-arriving data can still be indexed into an older backing index, as long as that index exists, remains writable, and its accepted time range includes the timestamp.
-To inspect the accepted time ranges of a TSDS's backing indices, use the [get data stream API]({{es-apis}}operation/operation-indices-get-data-stream):
+To inspect the accepted time ranges of TSDS backing indices, use the [get data stream API]({{es-apis}}operation/operation-indices-get-data-stream):
 
 ```console
 GET _data_stream/my-tsds
@@ -53,18 +53,17 @@ Writes might still be rejected even when a timestamp fits the accepted time rang
 {{ilm-cap}} will **not** proceed with running these actions until [`index.time_series.end_time`](elasticsearch://reference/elasticsearch/index-settings/time-series.md#index-time-series-end-time) has passed.
 ::::
 
-In addition to the concept of accepted time ranges for each backing index, there's a broader concept of an _eligible write window_.
-It is the period of time that extends from the present back to whichever comes first:
-
-- the first lifecycle action that makes a backing index read-only (such as [downsampling](/manage-data/data-store/data-streams/downsampling-time-series-data-stream.md) or a {{search-snap}} transition), or
-- the data stream retention limit (configured in a [data stream lifecycle](/manage-data/lifecycle/data-stream.md), for example)
-
 ## Past index creation [tsds-past-index-creation]
-
 ```{applies_to}
 stack: ga 9.5
 serverless: ga
 ```
+
+In addition to accepted time ranges for each backing index, a {{tsds}} has an _eligible write window_.
+It is the period of time that extends from the present back to whichever comes first:
+
+- the first lifecycle action that makes a backing index read-only (such as [downsampling](/manage-data/data-store/data-streams/downsampling-time-series-data-stream.md) or a {{search-snap}} transition), or
+- the data stream retention limit (configured in a [data stream lifecycle](/manage-data/lifecycle/data-stream.md), for example)
 
 When the
 [data_stream.past_tsdb_index_creation_enabled](elasticsearch://reference/elasticsearch/configuration-reference/miscellaneous-cluster-settings.md#time-series-data-stream) cluster setting is set to `true`, {{es}} automatically creates missing past backing indices while indexing documents that fall within the eligible write window.
@@ -81,11 +80,10 @@ Past backing indices hold old data but are new indices.
 
 Each new past backing index covers a configurable time interval.
 Use the [`data_streams.past_tsdb_index_interval`](elasticsearch://reference/elasticsearch/configuration-reference/miscellaneous-cluster-settings.md#time-series-data-stream) cluster setting to control the interval.
-<!-- The default is `1d`, with a minimum of `1h` and a maximum of `7d`. -->
 
 When the gap between existing indices is up to 1.3 times the configured interval, {{es}} may create a single bridging index instead of many small indices.
 
-For step-by-step guidance on loading historical data, refer to [Load historical metrics into a TSDS](/manage-data/data-store/data-streams/load-historical-tsds.md).
+For guidance on loading historical data, refer to [Load historical data into a TSDS](/manage-data/data-store/data-streams/load-historical-tsds.md).
 
 ## Dimension-based routing [dimension-based-routing]
 

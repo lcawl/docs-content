@@ -120,5 +120,5 @@ You can use the {{esql}} [`TS` command](elasticsearch://reference/query-language
 * [Ingest data using the OpenTelemetry Protocol (OTLP)](/manage-data/data-store/data-streams/tsds-ingest-otlp.md)
 * [Ingest data using Prometheus remote write](/manage-data/data-store/data-streams/tsds-ingest-prometheus-remote-write.md)
 * Learn about [metric temporality](/manage-data/data-store/data-streams/metric-temporality.md) (delta versus cumulative)
-* {applies_to}`stack: ga 9.5` {applies_to}`serverless: ga` [Load historical metrics into a TSDS](/manage-data/data-store/data-streams/load-historical-tsds.md)
+* {applies_to}`stack: ga 9.5` {applies_to}`serverless: ga` [Load historical data into a TSDS](/manage-data/data-store/data-streams/load-historical-tsds.md)
 * Learn about [downsampling](/manage-data/data-store/data-streams/downsampling-time-series-data-stream.md) to reduce storage footprint
