@@ -165,7 +165,6 @@ If you're using component templates with a {{tsds}}, check the following require
 ::::{step} Turn on past index creation (optional)
 ```{applies_to}
 stack: ga 9.5+
-serverless: ga
 ```
 {{es}} can create missing backing indices when you add data that precedes existing time ranges.
 To enable this feature, update the cluster settings:
@@ -214,7 +213,7 @@ POST metrics-weather-sensors/_doc
 }
 ```
 
-{applies_to}`stack: ga 9.5` {applies_to}`serverless: ga` If you turned on past index creation, {{es}} creates backing indices automatically as historical documents are added within the eligible write window. For more details, go to [How time-bound indices work](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-accepted-time-range).
+{applies_to}`stack: ga 9.5` If you turned on past index creation, {{es}} creates backing indices automatically as historical documents are added within the eligible write window. For more details, go to [How time-bound indices work](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-accepted-time-range).
 ::::
 
 ::::{step} Verify setup
@@ -268,7 +267,7 @@ To control access to a {{tsds-init}}, use [index privileges](elasticsearch://ref
 
 For an example, refer to [Data stream privileges](/deploy-manage/users-roles/cluster-or-deployment-auth/granting-privileges-for-data-streams-aliases.md#data-stream-privileges).
 
-{applies_to}`stack: ga 9.5` {applies_to}`serverless: ga` Users who write documents that trigger creation of [past backing indices](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-past-index-creation) need the `auto_configure` index privilege on the data stream, in addition to privileges that allow indexing (such as `create_doc` or `index`).
+{applies_to}`stack: ga 9.5` Users who write documents that trigger creation of [past backing indices](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-past-index-creation) need the `auto_configure` index privilege on the data stream, in addition to privileges that allow indexing (such as `create_doc` or `index`).
 Users with only the `index` privilege receive a `security_exception` when a write would create a past backing index.
 
 ## Next steps [set-up-tsds-whats-next]
@@ -278,5 +277,5 @@ Now that you've set up a {{tsds}}, you can manage and use it like a regular data
 * [Use a data stream](use-data-stream.md) for indexing and searching
 * [Change data stream settings](modify-data-stream.md#data-streams-change-mappings-and-settings) as needed
 * Query time series data using the {{esql}} [`TS` command](elasticsearch://reference/query-languages/esql/commands/ts.md)
-* {applies_to}`stack: ga 9.5` {applies_to}`serverless: ga` [Load historical data into a {{tsds-init}}](/manage-data/data-store/data-streams/load-historical-tsds.md)
+* {applies_to}`stack: ga 9.5` [Load historical data into a {{tsds-init}}](/manage-data/data-store/data-streams/load-historical-tsds.md)
 * Use [data stream APIs]({{es-apis}}group/endpoint-data-stream)
