@@ -185,7 +185,7 @@ PUT _cluster/settings
 ::::{step} Create the {{tsds}} and add data
 :anchor: create-tsds
 
-You can create a {{tsds}} by [indexing a document](use-data-stream.md#add-documents-to-a-data-stream).
+You can create a {{tsds}} explicitly by using the [create a data stream API]({{es-apis}}operation/operation-indices-create-data-stream) or implicitly by [indexing a document](use-data-stream.md#add-documents-to-a-data-stream).
 The {{tsds-init}} is created automatically when you index the first document, as long as the index name matches the index template pattern.
 You can use a bulk API request or a POST request.
 
