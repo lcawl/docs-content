@@ -97,7 +97,7 @@ A time series data stream works like a regular data stream, with some key differ
   * An auto-generated document `_id` (custom `_id` values are not supported)
 * **Backing indices:** A TSDS uses [time-bound indices](/manage-data/data-store/data-streams/time-bound-tsds.md) to store data from the same time period in the same backing index.
 
-  {applies_to}`stack: ga 9.5` {applies_to}`serverless: ga` When past index creation is turned on, {{es}} can create missing past backing indices on demand in TSDS.
+  {applies_to}`stack: ga 9.5` When past index creation is turned on, {{es}} can create missing past backing indices on demand in TSDS.
 * **Dimension-based routing:** The routing logic uses dimension fields to map all data points of a time series to the same shard, improving storage efficiency and query performance. Duplicate data points are rejected.
 * **Sorting:** A TSDS uses internal [index sorting](elasticsearch://reference/elasticsearch/index-settings/sorting.md) to order shard segments by `_tsid` and `@timestamp`, for better compression. Time series data streams do not use `index.sort.*` settings.
 * **Source field:** A TSDS uses [synthetic `_source`](elasticsearch://reference/elasticsearch/mapping-reference/mapping-source-field.md#synthetic-source), and as a result is subject to some [restrictions](elasticsearch://reference/elasticsearch/mapping-reference/mapping-source-field.md#synthetic-source-restrictions) and [modifications](elasticsearch://reference/elasticsearch/mapping-reference/mapping-source-field.md#synthetic-source-modifications) applied to the `_source` field.
@@ -120,5 +120,5 @@ You can use the {{esql}} [`TS` command](elasticsearch://reference/query-language
 * [Ingest data using the OpenTelemetry Protocol (OTLP)](/manage-data/data-store/data-streams/tsds-ingest-otlp.md)
 * [Ingest data using Prometheus remote write](/manage-data/data-store/data-streams/tsds-ingest-prometheus-remote-write.md)
 * Learn about [metric temporality](/manage-data/data-store/data-streams/metric-temporality.md) (delta versus cumulative)
-* {applies_to}`stack: ga 9.5` {applies_to}`serverless: ga` [Load historical data into a TSDS](/manage-data/data-store/data-streams/load-historical-tsds.md)
+* {applies_to}`stack: ga 9.5` [Load historical data into a TSDS](/manage-data/data-store/data-streams/load-historical-tsds.md)
 * Learn about [downsampling](/manage-data/data-store/data-streams/downsampling-time-series-data-stream.md) to reduce storage footprint
