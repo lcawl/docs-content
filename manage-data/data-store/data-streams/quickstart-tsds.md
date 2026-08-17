@@ -17,16 +17,15 @@ A _time series_ is a sequence of data points collected at regular time intervals
 
 * Access to [{{dev-tools-app}} Console](/explore-analyze/query-filter/tools/console.md) in {{kib}}, or another way to make {{es}} API requests
 
-* Cluster and index permissions: 
-    * [Cluster privilege](elasticsearch://reference/elasticsearch/security-privileges.md#privileges-list-cluster):  `manage_index_templates`
-    * [Index privileges](elasticsearch://reference/elasticsearch/security-privileges.md#privileges-list-indices): `create_doc` and `create_index`
+* Cluster and index permissions:
+  * [Cluster privilege](elasticsearch://reference/elasticsearch/security-privileges.md#privileges-list-cluster):  `manage_index_templates`
+  * [Index privileges](elasticsearch://reference/elasticsearch/security-privileges.md#privileges-list-indices): `create_doc` and `create_index`
 
-* Familiarity with [time series data stream concepts](time-series-data-stream-tsds.md) and [{{es}} index and search basics](/solutions/search/get-started.md) 
+* Familiarity with [time series data stream concepts](time-series-data-stream-tsds.md) and [{{es}} index and search basics](/solutions/search/get-started.md)
 
 You can follow this guide using any {{es}} deployment.
 To see all deployment options, refer to [](/deploy-manage/deploy.md#choosing-your-deployment-type).
 To get started quickly, spin up a cluster [locally in Docker](/deploy-manage/deploy/self-managed/local-development-installation-quickstart.md).
-
 
 ## Create and query a TSDS
 
@@ -89,125 +88,125 @@ In this step, create a new data stream called `quickstart-weather` based on the 
 
 Use a [`_bulk` API]({{es-apis}}operation/operation-bulk) request to add multiple documents at once. Make sure to adjust the timestamps to within a few minutes of the current time.
 
-% TODO simplify timestamps
-
 ```console
 PUT quickstart-weather/_bulk
 { "create":{ } }
-{ "@timestamp": "2025-09-08T21:25:00.000Z", "sensor_id": "STATION-0001", "location": "base", "temperature": 26.7, "humidity": 49.9 }
+{ "@timestamp": "2026-08-17T15:27:00Z", "sensor_id": "STATION-0001", "location": "base", "temperature": 26.7, "humidity": 49.9 }
 { "create":{ } }
-{ "@timestamp": "2025-09-08T21:26:00.000Z", "sensor_id": "STATION-0002", "location": "base", "temperature": 27.2, "humidity": 50.1 }
+{ "@timestamp": "2026-08-17T15:28:00Z", "sensor_id": "STATION-0002", "location": "base", "temperature": 27.2, "humidity": 50.1 }
 { "create":{ } }
-{ "@timestamp": "2025-09-08T21:35:00.000Z", "sensor_id": "STATION-0003", "location": "base", "temperature": 28.1, "humidity": 48.7 }
+{ "@timestamp": "2026-08-17T15:35:00Z", "sensor_id": "STATION-0003", "location": "base", "temperature": 28.1, "humidity": 48.7 }
 { "create":{ } }
-{ "@timestamp": "2025-09-08T21:27:00.000Z", "sensor_id": "STATION-0004", "location": "satellite", "temperature": 32.4, "humidity": 88.9 }
+{ "@timestamp": "2026-08-17T15:27:00Z", "sensor_id": "STATION-0004", "location": "satellite", "temperature": 32.4, "humidity": 88.9 }
 { "create":{ } }
-{ "@timestamp": "2025-09-08T21:36:00.000Z", "sensor_id": "STATION-0005", "location": "satellite", "temperature": 32.3, "humidity": 87.5 }
+{ "@timestamp": "2026-08-17T15:36:00Z", "sensor_id": "STATION-0005", "location": "satellite", "temperature": 32.3, "humidity": 87.5 }
 ```
 
-The response shows five sample weather data documents. 
+The response shows five sample weather data documents.
 
 :::{dropdown} Example response
 
 ```console-result
 {
+{
   "errors": false,
-  "took": 0,
+  "took": 201,
   "items": [
     {
       "create": {
-        "_index": ".ds-quickstart-weather-2025.09.08-000001",
-        "_id": "cFJZQJlNh-Xl8V_rAAABmSs3x-A",
+        "_index": ".ds-quickstart-weather-2026.08.17-000001",
+        "_id": "n1TMXZekg4PbwmflIo-DEH___l_vqrZfe0V20A",
         "_version": 1,
         "result": "created",
         "_shards": {
           "total": 2,
-          "successful": 2,
+          "successful": 1,
           "failed": 0
         },
-        "_seq_no": 0,
-        "_primary_term": 1,
+        "_seq_no": -2,
+        "_primary_term": 0,
         "status": 201
       }
     },
     {
       "create": {
-        "_index": ".ds-quickstart-weather-2025.09.08-000001",
-        "_id": "c-wsTT0T4CtI3hOuAAABmSs4skA",
+        "_index": ".ds-quickstart-weather-2026.08.17-000001",
+        "_id": "nxJ5wdVIkJ_n58lF5jwCL3___l_vqcv_t3QOyA",
         "_version": 1,
         "result": "created",
         "_shards": {
           "total": 2,
-          "successful": 2,
+          "successful": 1,
           "failed": 0
         },
-        "_seq_no": 1,
-        "_primary_term": 1,
+        "_seq_no": -2,
+        "_primary_term": 0,
         "status": 201
       }
     },
     {
       "create": {
-        "_index": ".ds-quickstart-weather-2025.09.08-000001",
-        "_id": "Hdee5vMpBvZymWvHAAABmStA76A",
+        "_index": ".ds-quickstart-weather-2026.08.17-000001",
+        "_id": "nxCDIiykVhifQ93893WVgn___l_vo2NfBckR1Q",
         "_version": 1,
         "result": "created",
         "_shards": {
           "total": 2,
-          "successful": 2,
+          "successful": 1,
           "failed": 0
         },
-        "_seq_no": 2,
-        "_primary_term": 1,
+        "_seq_no": -2,
+        "_primary_term": 0,
         "status": 201
       }
     },
     {
       "create": {
-        "_index": ".ds-quickstart-weather-2025.09.08-000001",
-        "_id": "e3Z2UirUQldsjLr2AAABmSs5nKA",
+        "_index": ".ds-quickstart-weather-2026.08.17-000001",
+        "_id": "n4Qa4o1ANAahdb-_FoBPY3___l_vqrZfuU1KcQ",
         "_version": 1,
         "result": "created",
         "_shards": {
           "total": 2,
-          "successful": 2,
+          "successful": 1,
           "failed": 0
         },
-        "_seq_no": 3,
-        "_primary_term": 1,
+        "_seq_no": -2,
+        "_primary_term": 0,
         "status": 201
       }
     },
     {
       "create": {
-        "_index": ".ds-quickstart-weather-2025.09.08-000001",
-        "_id": "N3-RYtQAp6JEsLRNAAABmStB2gA",
+        "_index": ".ds-quickstart-weather-2026.08.17-000001",
+        "_id": "n6zBK9auapJglZJUj7OvLH___l_vonj_-v6WYA",
         "_version": 1,
         "result": "created",
         "_shards": {
           "total": 2,
-          "successful": 2,
+          "successful": 1,
           "failed": 0
         },
-        "_seq_no": 4,
-        "_primary_term": 1,
+        "_seq_no": -2,
+        "_primary_term": 0,
         "status": 201
       }
     }
   ]
 }
 ```
+
 :::
 
 :::{tip}
-If you get an error about timestamp values, check the error response for the valid timestamp range. For more details, refer to [Accepted time range for adding data](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-accepted-time-range).
-
+If you get an error about timestamp values, check the error response for the valid timestamp range and re-run the the `_bulk` API with appropriate `@timestamp` values.
+For more details, refer to [Accepted time range for adding data](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-accepted-time-range).
 :::
 
 ::::
 ::::{step} Run a query
 
-Now that your data stream has some documents, you can use the ES|QL [`_query` endpoint]({{es-apis}}operation/operation-esql-query) to query the data. This sample aggregation shows the maximum of average temperature per sensor for each location, in hourly buckets.
+Now that your data stream has some documents, you can use the {{esql}} [`_query` endpoint]({{es-apis}}operation/operation-esql-query) to query the data. This sample aggregation shows the maximum of average temperature per sensor for each location, in hourly buckets.
 
 ```console
 POST _query?format=txt
@@ -219,16 +218,28 @@ POST _query?format=txt
 :::{dropdown} Example response
 
 ```console-result
-MAX(AVG_OVER_TIME(temperature))|   location   |      TBUCKET(1h)       
--------------------------------+--------------+------------------------
-27.333333333333332             |base          |2025-09-08T21:00:00.000Z
-32.359375                      |satellite     |2025-09-08T21:00:00.000Z
+max(avg_over_time(temperature))|   location    |      TBUCKET(1h)       
+-------------------------------+---------------+------------------------
+28.09375                       |base           |2026-08-17T15:00:00.000Z
+32.40625                       |satellite      |2026-08-17T15:00:00.000Z
 ```
 :::
 
 :::{tip}
 You can also try this aggregation in a [data view](/explore-analyze/find-and-organize/data-views.md) in {{kib}}.
 :::
+
+::::
+
+::::{step} Delete the TSDS
+
+When you no longer need the TSDS and index template created in this quickstart, use the [delete data streams API]({{es-apis}}operation/operation-indices-delete-data-stream) and [delete an index template API]({{es-apis}}operation/operation-indices-delete-index-template).
+For example:
+
+```console
+DELETE /_data_stream/quickstart-weather
+DELETE /_index_template/quickstart-tsds-template
+```
 
 ::::
 :::::
@@ -241,6 +252,7 @@ This quickstart introduced the basics of time series data streams. To learn more
 * [](/manage-data/data-store/data-streams/set-up-tsds.md)
 
 If you're working with OpenTelemetry (OTLP) or Prometheus data, refer to:
+
 * [](/manage-data/data-store/data-streams/tsds-ingest-otlp.md)
 * [](/manage-data/data-store/data-streams/tsds-ingest-prometheus-remote-write.md)
 * [](/solutions/observability/get-started/opentelemetry/quickstart/index.md)
