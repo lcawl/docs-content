@@ -210,19 +210,19 @@ To make sure your {{tsds}} is working, try some GET requests.
 View data stream details:
 
 ```console
-GET _data_stream/metrics-prod 
+GET _data_stream/metrics-weather-sensors
 ```
 
 Check the document count in a {{tsds}}:
 
 ```console
-GET metrics-prod/_count 
+GET metrics-weather-sensors/_count 
 ```
 
 Query the time series data:
 
 ```console
-GET metrics-prod/_search 
+GET metrics-weather-sensors/_search 
 {
   "size": 5,
   "sort": ["@timestamp"]
