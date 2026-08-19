@@ -40,7 +40,7 @@ These high-level steps summarize the process of reindexing a time series data st
 :::{applies-item} stack: ga 9.5+
 
 1. Turn on past index creation.
-2. Create an index template for the destination data stream.
+2. Create an index template for the destination data stream without lifecycle details.
 3. Create the destination data stream and run the reindex operation.
 4. Add data stream lifecycle.
 
@@ -57,8 +57,10 @@ The examples on this page use Dev Tools [Console](/explore-analyze/query-filter/
 ```{applies_to}
 stack: ga 9.5+
 ```
+<!-- Uncomment after https://github.com/elastic/docs-content/pull/7558
 :::{include} /manage-data/_snippets/enable-backfill.md
 :::
+-->
 ::::
 ::::{step} Create the destination index template
 :anchor: tsds-reindex-create-template
