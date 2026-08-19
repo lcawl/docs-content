@@ -12,7 +12,8 @@ By default, a {{tsds-cap}} ({{tsds-init}}) works well for continuous, near-real-
 Only documents with `@timestamp` values that fall inside the time range of existing backing indices are accepted.
 
 If you turn on the [data_stream.past_tsdb_index_creation_enabled](elasticsearch://reference/elasticsearch/configuration-reference/miscellaneous-cluster-settings.md#time-series-data-stream) cluster setting, however, you can import historical data into an existing {{tsds-init}} using the same APIs you use for live data.
-{{es}} creates the past backing indices needed to store past documents within the [eligible write window](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-past-index-creation) as they arrive.
+{{es}} creates the past backing indices needed to store past documents as they arrive.
+The documents must fall within the [eligible write window](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-past-index-creation), which is the period of time between "current" and the data stream retention limit or the first occurrence of a lifecycle action that makes a backing index read-only, whichever occurs first.
 Write-time deduplication and {{tsds-init}} storage optimizations apply to historical data the same way they apply to live data.
 
 :::{note}
