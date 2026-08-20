@@ -173,13 +173,23 @@ stack: ga 9.5+
 ::::{step} Create the {{tsds}} and add data
 :anchor: create-tsds
 
-You can create a {{tsds}} explicitly by using the [create a data stream API]({{es-apis}}operation/operation-indices-create-data-stream) or implicitly by [indexing a document](use-data-stream.md#add-documents-to-a-data-stream).
-The {{tsds-init}} is created automatically when you index the first document, as long as the index name matches the index template pattern.
-You can use a bulk API request or a POST request.
+You can create a {{tsds}} explicitly with the [create a data stream]({{es-apis}}operation/operation-indices-create-data-stream) API.
+You must give it a name that matches the `index_patterns` in your index template.
+For example:
+
+```console
+PUT _data_stream/metrics-weather-sensors
+```
+
+Alternatively, you can create it implicitly by indexing a document.
+The {{tsds-init}} is created automatically as long as the index name in your API matches the index template pattern.
 
 :::{important}
-To test the following `_bulk` example, update the timestamps to within two hours of your current time.
-This update is required because data added to a {{tsds-init}} must fall within an existing backing index's [accepted time range](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-accepted-time-range). The first backing index is sized around creation time using `look_back_time` (default two hours) and `look_ahead_time`.
+To add data to your data stream with the following bulk API request or POST request, you must update the timestamps to within two hours of your current time.
+Data added to a {{tsds-init}} must fit the [accepted time range](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-accepted-time-range).
+The first backing index is sized around creation time using `look_back_time` (default two hours) and `look_ahead_time`.
+
+{applies_to}`stack: ga 9.5` If you turned on past index creation, {{es}} creates backing indices automatically as historical documents are added within the eligible write window. For more details, go to [How time-bound indices work](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-accepted-time-range).
 :::
 
 ```console
@@ -188,9 +198,7 @@ PUT metrics-weather-sensors/_bulk
 { "@timestamp": "2099-05-06T16:21:15.000Z", "sensor_id": "SENSOR-001", "location": "warehouse-A", "temperature": 26.7,"humidity": 49.9 }
 { "create":{ } }
 { "@timestamp": "2099-05-06T16:25:42.000Z", "sensor_id": "SENSOR-002", "location": "warehouse-B", "temperature": 32.4, "humidity": 88.9 }
-```
 
-```console
 POST metrics-weather-sensors/_doc
 {
   "@timestamp": "2099-05-06T16:21:15.000Z",
@@ -201,7 +209,8 @@ POST metrics-weather-sensors/_doc
 }
 ```
 
-{applies_to}`stack: ga 9.5` If you turned on past index creation, {{es}} creates backing indices automatically as historical documents are added within the eligible write window. For more details, go to [How time-bound indices work](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-accepted-time-range).
+For more information about adding documents to data streams, go to [](use-data-stream.md#add-documents-to-a-data-stream).
+
 ::::
 
 ::::{step} Verify setup
