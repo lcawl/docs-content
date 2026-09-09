@@ -64,8 +64,8 @@ It is the period of time that extends from the present back to whichever comes f
 - the first lifecycle action that makes a backing index read-only (such as [downsampling](/manage-data/data-store/data-streams/downsampling-time-series-data-stream.md) or a {{search-snap}} transition), or
 - the data stream retention limit (configured in a [data stream lifecycle](/manage-data/lifecycle/data-stream.md), for example)
 
-When the
-[data_stream.past_tsdb_index_creation_enabled](elasticsearch://reference/elasticsearch/configuration-reference/miscellaneous-cluster-settings.md#time-series-data-stream) cluster setting is set to `true`, {{es}} automatically creates missing past backing indices for an existing {{tsds}} while indexing documents that fall within the eligible write window.
+{{es}} can 
+automatically create missing past backing indices for an existing {{tsds}} while indexing documents that fall within the eligible write window. To enable this, set the [`data_stream.past_tsdb_index_creation_enabled`](elasticsearch://reference/elasticsearch/configuration-reference/miscellaneous-cluster-settings.md#time-series-data-stream) cluster setting to `true`.
 
 Timestamps outside the eligible write window or in the future are still rejected.
 If a [failure store](/manage-data/data-store/data-streams/failure-store.md) is enabled, rejected timestamp failures can be redirected there.
