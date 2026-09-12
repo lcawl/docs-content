@@ -24,7 +24,7 @@ When the {{tsds-init}} is created, the first backing index has the following ran
 - Its [`index.time_series.start_time`](elasticsearch://reference/elasticsearch/index-settings/time-series.md#index-time-series-start-time), which is the earliest accepted timestamp (inclusive), is set to `now` minus the [`index.look_back_time`](elasticsearch://reference/elasticsearch/index-settings/time-series.md#index-look-back-time).
 - Its [`index.time_series.end_time`](elasticsearch://reference/elasticsearch/index-settings/time-series.md#index-time-series-end-time), which is the latest accepted timestamp (exclusive), is set to `now` plus [`index.look_ahead_time`](elasticsearch://reference/elasticsearch/index-settings/time-series.md#index-look-ahead-time).
 
-Thereafter, {{es}} automatically configures the settings for backing indices as part of the index creation and rollover process.
+Thereafter, {{es}} automatically configures the settings for backing indices as part of the index creation and [rollover](/manage-data/lifecycle/index-lifecycle-management/rollover.md) process.
 Each new backing index starts at the previous index's `end_time` and extends further ahead using `look_ahead_time`.
 
 When you add a document to the TSDS, {{es}} routes it to the appropriate backing index based on its `@timestamp` value.
@@ -45,7 +45,7 @@ By default, if no existing backing index can accept a document's `@timestamp`, {
 {{es}} does not create missing past backing indices unless you [turn on past index creation](#tsds-past-index-creation).
 
 ::::{tip}
-Writes might still be rejected even when a timestamp fits the accepted time range of a backing index. The following actions can affect the writable time range, either because they make a backing index read-only or remove it:
+Writes might still be rejected even when a timestamp fits the accepted time range of a backing index. The following [actions](elasticsearch://reference/elasticsearch/index-lifecycle-actions.md) can affect the writable time range, either because they make a backing index read-only or remove it:
 
 - [Delete](elasticsearch://reference/elasticsearch/index-lifecycle-actions/ilm-delete.md)
 - [Downsample](elasticsearch://reference/elasticsearch/index-lifecycle-actions/ilm-downsample.md)
@@ -77,7 +77,7 @@ If a [failure store](/manage-data/data-store/data-streams/failure-store.md) is e
 :::{admonition} Lifecycle age for past indices
 
 Past backing indices hold old data but are new indices.
-{{es}} sets [`index.lifecycle.origination_date`](elasticsearch://reference/elasticsearch/configuration-reference/data-stream-lifecycle-settings.md#index-data-stream-lifecycle-origination-date) from `index.time_series.end_time` so that data stream lifecycle and {{ilm-init}} treat the index age based on the data it contains, not when the index was created.
+{{es}} sets [`index.lifecycle.origination_date`](elasticsearch://reference/elasticsearch/configuration-reference/data-stream-lifecycle-settings.md#index-data-stream-lifecycle-origination-date) from `index.time_series.end_time` so that data stream lifecycle and [{{ilm}}](/manage-data/lifecycle/index-lifecycle-management.md) treat the index age based on the data it contains, not when the index was created.
 
 :::
 
