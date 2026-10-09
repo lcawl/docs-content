@@ -1,5 +1,5 @@
 ---
-navigation_title: Grant feature access
+navigation_title: Attack Discovery privileges
 description: "Required Kibana, index, and workflow privileges for Attack Discovery by version."
 applies_to:
   stack: ga
@@ -79,7 +79,7 @@ serverless:
   security: ga
 ```
 
-When you turn on [Attack Discovery Workflows](/solutions/security/get-started/configure-advanced-settings.md#enable-attack-discovery-workflows), your role also needs **Analytics > Workflows** privileges. {{serverless-short}} roles include that access by default. On self-managed and {{ech}} deployments, add it to custom roles.
+When you turn on [`securitySolution:enableAttackDiscoveryWorkflows`](kibana://reference/advanced-settings.md#kibana-siem-settings), your role also needs **Analytics > Workflows** privileges. {{serverless-short}} roles include that access by default. On self-managed and {{ech}} deployments, add it to custom roles.
 
 | Attack Discovery action | Workflows privilege needed |
 |---|---|
