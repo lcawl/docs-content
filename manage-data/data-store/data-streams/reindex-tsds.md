@@ -19,13 +19,13 @@ description: Reindex documents into a new time series data stream with the reind
 
 Copy documents from an existing {{tsds}} ({{tsds-init}}) into a new data stream when you need to change [mappings or static index settings](/manage-data/data-store/data-streams/modify-data-stream.md#data-streams-use-reindex-to-change-mappings-settings), or when you want to [filter or transform documents](elasticsearch://reference/elasticsearch/rest-apis/reindex-indices.md) during the copy. A {{tsds-init}} needs extra steps because it stores metrics in time-bound backing indices and {{es}} accepts a document only when its `@timestamp` falls in one of those time ranges.
 
-The examples on this page use Dev Tools [**Console**](/explore-analyze/query-filter/tools/console.md) syntax.
-
 ## Before you begin [tsds-reindex-prereqs]
 
 - Use this process for a {{tsds-init}} that doesn't have a [downsampling](/manage-data/data-store/data-streams/downsampling-time-series-data-stream.md) configuration. To reindex a downsampled data stream, reindex the backing indices individually, then add them to a new, empty data stream.
 - For a major version upgrade, use the [reindex legacy backing indices API]({{es-apis}}operation/operation-indices-migrate-reindex) instead of this reindex operation.
 - Review [time-bound indices](/manage-data/data-store/data-streams/time-bound-tsds.md) so you understand the timestamp window each backing index accepts.
+
+The examples on this page use Dev Tools [**Console**](/explore-analyze/query-filter/tools/console.md) syntax.
 
 ## Reindex the data stream [reindex-the-data-stream]
 
@@ -212,6 +212,9 @@ PUT _data_stream/my-new-tsds
 ::::
 
 ::::{step} Run the reindex operation
+
+Use the [reindex API]({{es-apis}}operation/operation-reindex) to copy documents from the source to the destination data stream.
+For example:
 
 ```console
 POST /_reindex
