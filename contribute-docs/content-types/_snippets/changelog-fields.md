@@ -8,7 +8,7 @@ title:
 type: 
 
 # A required string that contains the type of change.
-# For the acceptable values, refer to https://github.com/elastic/docs-builder/blob/main/src/Elastic.Documentation/ChangelogEntryType.cs
+# For the acceptable values, refer to https://github.com/elastic/docs-builder/blob/main/src/Elastic.Documentation/ReleaseNotes/ChangelogEntryType.cs
 products:
 
 # A required array of objects that denote the affected products.
@@ -21,10 +21,10 @@ products:
       
       versions:
 
-      # A list of concrete release versions this changelog applies to.
-      # Required when the changelog is not tied to a pull request.
-      # Omit when `prs` attaches the change to a release.
-      # Example: [9.3.0, 9.4.0]
+      # A list of concrete release versions or dates this changelog applies to.
+      # This field is required when you run the "changelog note" command.
+      # Omit when `prs` lists at least one pull request that ships in a product release.
+      # Use a YAML list of concrete values such as [9.3.0, 9.4.0], not "*" and not a pipe-separated string.
 
       lifecycle:
 
@@ -71,11 +71,12 @@ issues:
 
 prs:
 
-# An optional array of pull request identifiers (URLs or numbers).
-# Each value is externalized in the release docs so users can follow the links and find more details.
+# An optional array of product pull request identifiers (URLs or numbers).
+# This field is used to map changelogs to the list of changes shipped in a product release.
+# Each value is externalized in the release docs so users can follow the links and find more details (unless it is a private URL).
 
 subtype:
 
 # An optional string that applies only to breaking changes and further subdivides that type.
-# For the acceptable values, refer to https://github.com/elastic/docs-builder/blob/main/src/Elastic.Documentation/ChangelogEntrySubtype.cs
+# For the acceptable values, refer to https://github.com/elastic/docs-builder/blob/main/src/Elastic.Documentation/ReleaseNotes/ChangelogEntrySubtype.cs
 ```
