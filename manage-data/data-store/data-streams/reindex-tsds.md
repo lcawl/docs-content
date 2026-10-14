@@ -389,7 +389,8 @@ PUT _index_template/my-new-tsds-template
     "settings": {
       "index.mode": "time_series",
       "index.time_series.start_time": "2023-01-01T00:00:00Z", <1>
-      "index.time_series.end_time": "2025-01-01T00:00:00Z" <2>
+      "index.time_series.end_time": "2025-01-01T00:00:00Z", <2>
+      "index.lifecycle.skip": true <3>
     },
     "mappings": {
       "properties": {
