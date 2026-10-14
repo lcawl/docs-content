@@ -153,6 +153,21 @@ PUT _data_stream/my-new-tsds/_lifecycle
 
 For more details, refer to [Set a data stream's lifecycle](/manage-data/lifecycle/data-stream/tutorial-update-existing-data-stream.md#set-lifecycle).
 ::::
+::::{step} Turn off past index creation
+
+If you don't want the [past index creation](manage-data/data-store/data-streams/time-bound-tsds.md#tsds-past-index-creation) feature enabled for all of the data streams in your cluster, turn it off:
+
+```console
+PUT _cluster/settings
+{
+  "persistent": {
+    "data_stream.past_tsdb_index_creation_enabled": false
+  }
+}
+```
+
+Refer to [`data_streams.past_tsdb_index_interval`](elasticsearch://reference/elasticsearch/configuration-reference/miscellaneous-cluster-settings.md#time-series-data-stream).
+::::
 :::::
 ::::::
 ::::::{applies-item} stack: ga 9.0-9.4
