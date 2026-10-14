@@ -136,26 +136,14 @@ The response lists each backing index and the time range it accepts.
 ::::
 
 ::::{step} Add data stream lifecycle
-:anchor: lifecycle
+:anchor: add-lifecycle
 
-After the reindex completes, optionally add a data stream lifecycle to manage retention, performance, and storage.
-For example, use the [update data stream lifecycles]({{es-apis}}operation/operation-indices-put-data-lifecycle) API:
-
-```console
-PUT _data_stream/my-new-tsds/_lifecycle
-{
-  "enabled": true,
-  "data_retention": "365d" <1>
-}
-```
-
-1. The retention period of this data stream is set to 365 days. This means that {{es}} is allowed to delete data that is older than a year at its own discretion.
-
-For more details, refer to [Set a data stream's lifecycle](/manage-data/lifecycle/data-stream/tutorial-update-existing-data-stream.md#set-lifecycle).
+:::{include} /manage-data/_snippets/add-lifecycle.md
+:::
 ::::
 ::::{step} Turn off past index creation
 
-If you don't want the [past index creation](manage-data/data-store/data-streams/time-bound-tsds.md#tsds-past-index-creation) feature enabled for all of the data streams in your cluster, turn it off:
+If you don't want the [past index creation](/manage-data/data-store/data-streams/time-bound-tsds.md#tsds-past-index-creation) feature enabled for all of the data streams in your cluster, turn it off:
 
 ```console
 PUT _cluster/settings
@@ -261,7 +249,7 @@ PUT _index_template/my-new-tsds-template
 2. Highest timestamp value in the old data stream plus a small buffer
 3. Sum of the primary shards from all source backing indices
 4. Speed up reindexing
-5. Pause {{ilm}}
+5. Pause {{ilm}} if it was configured
 ::::
 
 ::::{step} Create the destination data stream
@@ -344,7 +332,13 @@ PUT _index_template/my-new-tsds-template
 ```
 
 1. Restore replicas
-2. Re-enable {{ilm}}
+2. Re-enable {{ilm}} if it was configured
+::::
+::::{step} Add data stream lifecycle
+:anchor: add-90-lifecycle
+
+:::{include} /manage-data/_snippets/add-lifecycle.md
+:::
 ::::
 
 ::::{step} Roll over for new data
@@ -513,7 +507,7 @@ PUT _index_template/my-new-tsds-template
 
 ::::
 ::::{step} Add data stream lifecycle
-:anchor: serverless-lifecycle
+:anchor: add-serverless-lifecycle
 
 After the reindex completes, optionally customise the data stream lifecycle to manage retention, performance, and storage.
 For example, use the [update data stream lifecycles]({{es-apis}}operation/operation-indices-put-data-lifecycle) API:
