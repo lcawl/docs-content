@@ -31,7 +31,7 @@ For a major version upgrade, use the [reindex legacy backing indices API]({{es-a
 - You must have the following permissions:
   - [Cluster privileges](elasticsearch://reference/elasticsearch/security-privileges.md#privileges-list-cluster)
     - `manage_index_templates` to create a template
-    - {applies_to}`stack: ga 9.0-9.4` `manage_ilm` if you use [{{ilm}}](#tsds-ilm-policy)
+    - {applies_to}`stack: ga 9.0-9.4` `manage_ilm` if you use [{{ilm}}](/manage-data/lifecycle/index-lifecycle-management.md)
     - {applies_to}`stack: ga 9.5+` `manage` to update cluster settings
   - [Index privileges](elasticsearch://reference/elasticsearch/security-privileges.md#privileges-list-indices)
     - `create_doc` and `create_index` to create a {{tsds-init}}
