@@ -413,6 +413,7 @@ PUT _index_template/my-new-tsds-template
 
 1. Lowest timestamp value in the old data stream
 2. Highest timestamp value in the old data stream
+3. Instruct data stream lifecycle to not manage the backing indices.
 
 Don't add a data stream lifecycle to the template yet.
 That keeps lifecycle actions such as downsampling from modifying the destination while you reindex.
@@ -464,7 +465,7 @@ The response lists each backing index and the time range it accepts.
 ::::{step} Restore the destination index template
 :anchor: serverless-restore
 
-After reindexing completes, update the index template and remove `index.time_series.start_time` and `index.time_series.end_time`.
+After reindexing completes, update the index template and remove `index.time_series.start_time`, `index.time_series.end_time` and `index.lifecycle.skip`. 
 
 ```console
 PUT _index_template/my-new-tsds-template
@@ -499,7 +500,7 @@ PUT _index_template/my-new-tsds-template
 ::::{step} Add data stream lifecycle
 :anchor: serverless-lifecycle
 
-After the reindex completes, optionally add a data stream lifecycle to manage retention, performance, and storage.
+After the reindex completes, optionally customise the data stream lifecycle to manage retention, performance, and storage.
 For example, use the [update data stream lifecycles]({{es-apis}}operation/operation-indices-put-data-lifecycle) API:
 
 ```console
