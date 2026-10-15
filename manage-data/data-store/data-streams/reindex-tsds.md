@@ -114,7 +114,7 @@ For example:
 POST /_reindex
 {
   "source": {
-    "index": "old-tsds"
+    "index": "my-old-tsds"
   },
   "dest": {
     "index": "my-new-tsds",
@@ -274,7 +274,7 @@ For example:
 POST /_reindex
 {
   "source": {
-    "index": "old-tsds"
+    "index": "my-old-tsds"
   },
   "dest": {
     "index": "my-new-tsds",
@@ -452,7 +452,7 @@ For example:
 POST /_reindex
 {
   "source": {
-    "index": "old-tsds"
+    "index": "my-old-tsds"
   },
   "dest": {
     "index": "my-new-tsds",
