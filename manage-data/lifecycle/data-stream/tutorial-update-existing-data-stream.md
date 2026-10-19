@@ -55,7 +55,7 @@ To change the data retention settings for a data stream:
 1. In the flyout, select **Manage → Edit data retention**. You can do any of the following:
 
     - Select how long to retain your data, in days, hours, minutes, or seconds.
-    - Select **Keep data indefinitely**. The data stream stays managed, and {{es}} does not delete the data. Managing a time series data stream, such as logs or metrics, helps {{es}} store your data even when you don't set a retention period.
+    - Select **Keep data indefinitely**. The data stream stays managed but {{es}} does not delete the data. Managing a {{tsds}}, such as logs or metrics, helps {{es}} store your data even when you don't set a retention period.
     - Turn off **Enable data retention** to stop data stream lifecycle management for this data stream.
 
     If [{{ilm-init}}](/manage-data/lifecycle/index-lifecycle-management.md) already manages the data stream, edit the associated {{ilm-init}} policy instead.
@@ -72,7 +72,7 @@ To change the data retention settings for a data stream:
     { } <1>
     ```
 
-    1. An empty payload means that your data stream is still managed, and {{es}} does not delete the data. Managing a time series data stream, such as logs or metrics, helps {{es}} store your data even when you don't set a retention period.
+    1. An empty payload means that your data stream is managed but {{es}} does not delete the data. Managing a {{tsds}}, such as logs or metrics, helps {{es}} store your data even when you don't set a retention period.
 
 * Or set a retention period. For example:
 
