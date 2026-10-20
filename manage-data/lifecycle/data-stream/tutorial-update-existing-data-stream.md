@@ -55,18 +55,29 @@ To change the data retention settings for a data stream:
 1. Select the **Data Streams** tab.
 1. Search for the data stream.
 1. Select the data stream to view its details.
-    <!--
-    TBD: Behaviour changed in 9.5.0 per https://github.com/elastic/kibana/issues/266070 It's no longer obvious how these values relate to the API
-      * {applies_to}`stack: ga 9.0-9.4` The flyout shows the effective data retention settings.
-      * {applies_to}`stack: ga 9.5+` The flyout shows the successful and failure ingest lifecycle details.
-    -->
-1. From the **Manage** menu, select **Edit data retention**. You can do any of the following:
+1. In the data stream details pane, adjust the data retention settings:
 
-    - Select how long to retain your data, in days, hours, minutes, or seconds.
-    - Select **Keep data indefinitely**. The data stream stays managed but {{es}} does not delete the data. Managing a {{tsds}}, such as logs or metrics, helps {{es}} store your data even when you don't set a retention period.
-    - Turn off **Enable data retention** to stop data stream lifecycle management for this data stream.
+   * {applies_to}`stack: ga 9.5+` Click the actions icon {icon}`gear` and select **Edit data lifecycle**.
+     You can do any of the following:
 
-The lifecycle change applies to every backing index of the data stream.
+     * On the **Successful data** tab, select the **Data stream lifecycle** method.
+
+       Select the **Delete phase** to choose how long to retain your data, in days, hours, minutes, or seconds. If you deselect the delete phase, {{es}} does not delete the data.
+
+       Select the **Frozen phase** to choose when to move your data to [{{search-snaps}}](#configure-dlm-searchable-snapshots), in days, hours, hours, minutes, or seconds.
+     * On the **Failed data** tab, select **Enable failure store** to turn on a [failure store](/manage-data/data-store/data-streams/failure-store.md). Select how long to retain failure store data, in days, hours, minutes, or seconds.
+  
+   * {applies_to}`stack: ga 9.0-9.4` Select **Manage** → **Edit data retention**.
+     You can do any of the following:
+
+     * Select how long to retain your data, in days, hours, minutes, or seconds.
+     * Select **Keep data indefinitely**. The data stream stays managed but {{es}} does not delete the data. Managing a {{tsds}}, such as logs or metrics, helps {{es}} store your data even when you don't set a retention period.
+     * Turn off **Enable data retention** to stop data stream lifecycle management for this data stream.
+
+1. Reopen the data stream flyout to confirm the change. Lifecycle changes apply to every backing index of the data stream.
+
+   * {applies_to}`stack: ga 9.0-9.4` The flyout shows the effective data retention settings.
+   * {applies_to}`stack: ga 9.5+` The flyout shows the successful and failure ingest lifecycle details.
 
 $$$data-retention-streams$$$
 Alternatively, you can use the **Streams** page in {{kib}}, which is a centralized interface for common data management tasks, including how your data streams retain data. Refer to [](/solutions/observability/streams/configure-retention.md).
@@ -188,22 +199,24 @@ Remove the lifecycle with the **{{index-manage-app}}** tools in {{kib}} or the {
 :::{tab-item} {{kib}}
 :sync: kibana
 
-<!-- TBD: Serverless only? -->
+<!-- TBD: Not applicable to Serverless per https://github.com/elastic/docs-content/pull/8021#discussion_r4272648315 ? -->
 
 To remove a data stream's lifecycle:
 
 1. Find **{{index-manage-app}}** in the navigation menu or use the [global search field](/explore-analyze/find-and-organize/find-apps-and-objects.md).
 1. Select the **Data Streams** tab.
 1. Search for the data stream.
-1. Select the data stream.
-1. From the **Manage** menu, select **Edit data retention**.
-1. Turn off **Enable data retention** and save your changes.
-   The maintenance operations from the lifecycle no longer apply to the data stream or its backing indices.
-1. {applies_to}`stack: ga 9.0-9.4` Reopen the data stream flyout to confirm the change. **Effective data retention** shows **Disabled**.
+1. Select the data stream to view its details.
+1. In the data stream details pane, adjust the lifecycle settings:
 
-<!--
-TBD: Behaviour changed in 9.5.0 per https://github.com/elastic/kibana/issues/266070 It's no longer obvious how you can confirm the change
--->
+   * {applies_to}`stack: ga 9.5+` Click the actions icon {icon}`gear` and select **Edit data lifecycle**. On the **Successful data** tab, select the **Data stream lifecycle** method and deselect all optional phases.
+   * {applies_to}`stack: ga 9.0-9.4` Select **Manage** → **Edit data retention**. Turn off **Enable data retention** and save your changes.
+1. Reopen the data stream flyout to confirm the change.
+
+   * {applies_to}`stack: ga 9.5+` **Successful ingest lifecycle** shows an infinity icon {icon}`infinity` to indicate that it keeps data indefinitely.
+   * {applies_to}`stack: ga 9.0-9.4` **Effective data retention** shows **Disabled**.
+
+<!-- NOTE: In 9.6 test these Kibana methods seem to have the same result as the API i.e. do make the stream `"managed_by_lifecycle": false` -->
 
 :::
 :::{tab-item} API
