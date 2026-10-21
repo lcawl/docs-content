@@ -66,6 +66,8 @@ To change the data retention settings for a data stream:
 
        Select the **Frozen phase** to choose when to move your data to [{{search-snaps}}](#configure-dlm-searchable-snapshots), in days, hours, hours, minutes, or seconds.
      * On the **Failed data** tab, select **Enable failure store** to turn on a [failure store](/manage-data/data-store/data-streams/failure-store.md). Select how long to retain failure store data, in days, hours, minutes, or seconds.
+
+     Click **Apply** to save the changes.
   
    * {applies_to}`stack: ga 9.0-9.4` Select **Manage** → **Edit data retention**.
      You can do any of the following:
@@ -163,12 +165,36 @@ stack: ga 9.5+
 serverless: unavailable
 ```
 
-Add `frozen_after` to the lifecycle so older backing indices become partially mounted {{search-snaps}} on the frozen tier.
+Configure the data stream lifecycle frozen phase with the **{{index-manage-app}}** tools in {{kib}} or the {{es}} [lifecycle API]({{es-apis}}operation/operation-indices-put-data-lifecycle).
+
 For how conversion works, operational behavior, and troubleshooting blocked conversions, refer to [](/manage-data/lifecycle/data-stream/dlm-searchable-snapshots.md).
+
+:::::{tab-set}
+:group: kibana-api
+:::{tab-item} {{kib}}
+:sync: kibana
+
+To change the frozen phase settings for a data stream:
+
+1. Confirm that a default snapshot repository is registered.
+   To change the default snapshot repository, refer to [{{ech}}](/deploy-manage/tools/snapshot-and-restore/elastic-cloud-hosted.md#snapshot-repo-default) or [self-managed](https://www.elastic.co/docs/deploy-manage/tools/snapshot-and-restore/self-managed#snapshot-repo-default) instructions.
+1. Find **{{index-manage-app}}** in the navigation menu or use the [global search field](/explore-analyze/find-and-organize/find-apps-and-objects.md).
+1. Select the **Data Streams** tab.
+1. Search for the data stream.
+1. Select the data stream to view its details.
+1. In the data stream details pane, click the actions icon {icon}`gear` and select **Edit data lifecycle**.
+1. On the **Successful data** tab, select the **Data stream lifecycle** method.
+1. Select the **Frozen phase** to choose when to move your data to {{search-snaps}}, in days, hours, hours, minutes, or seconds.
+This period of time must be smaller than the period specified for the delete phase.
+1. Click **Apply** to save the changes.
+
+:::
+:::{tab-item} API
+
+Add `frozen_after` to the lifecycle so older backing indices become partially mounted {{search-snaps}} on the frozen tier.
 
 1. Confirm that a default snapshot repository is registered. Refer to [Manage snapshot repositories](/deploy-manage/tools/snapshot-and-restore/manage-snapshot-repositories.md).
 1. Set `frozen_after` (and optionally `data_retention`) on the data stream lifecycle.
-   You can't use the **{{index-manage-app}}** tools in {{kib}} for this step.
    Use the [PUT data stream lifecycle API]({{es-apis}}operation/operation-indices-put-data-lifecycle):
 
     ```console
@@ -189,6 +215,8 @@ For how conversion works, operational behavior, and troubleshooting blocked conv
     ```
 
     If conversions are blocked, refer to [Troubleshooting](/manage-data/lifecycle/data-stream/dlm-searchable-snapshots.md#dlm-frozen-transition-troubleshooting).
+:::
+:::::
 
 ## Remove the lifecycle for a data stream [delete-lifecycle]
 
@@ -209,7 +237,7 @@ To remove a data stream's lifecycle:
 1. Select the data stream to view its details.
 1. In the data stream details pane, adjust the lifecycle settings:
 
-   * {applies_to}`stack: ga 9.5+` Click the actions icon {icon}`gear` and select **Edit data lifecycle**. On the **Successful data** tab, select the **Data stream lifecycle** method and deselect all optional phases.
+   * {applies_to}`stack: ga 9.5+` Click the actions icon {icon}`gear` and select **Edit data lifecycle**. On the **Successful data** tab, select the **Data stream lifecycle** method and deselect all optional phases. Click **Apply** to save the changes.
    * {applies_to}`stack: ga 9.0-9.4` Select **Manage** → **Edit data retention**. Turn off **Enable data retention** and save your changes.
 1. Reopen the data stream flyout to confirm the change.
 
@@ -263,7 +291,6 @@ GET my-data-stream-test/_lifecycle/explain
 
 * To create a stream and set its lifecycle before data arrives, refer to [Create a data stream with a lifecycle](/manage-data/lifecycle/data-stream/tutorial-create-data-stream-with-lifecycle.md).
 * To see how effective retention is calculated, refer to [Setting retention for {{es}} data streams](/manage-data/lifecycle/data-stream/tutorial-data-stream-retention.md).
-* To move older backing indices to {{search-snaps}}, refer to [{{search-snaps-cap}} for data streams](/manage-data/lifecycle/data-stream/dlm-searchable-snapshots.md).
 * To move a stream from {{ilm-init}} to a data stream lifecycle, refer to [Migrating {{ilm-init}}-managed data streams to data stream lifecycle](/manage-data/lifecycle/data-stream/tutorial-migrate-ilm-managed-data-stream-to-data-stream-lifecycle.md).
 
 ## Related pages [update-data-stream-lifecycle-related]
