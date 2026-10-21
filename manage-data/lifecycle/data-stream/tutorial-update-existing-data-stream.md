@@ -35,68 +35,84 @@ To follow these steps, you need:
 
 ## Set a data stream's lifecycle [set-lifecycle]
 
-Add or change the data stream lifecycle with the **{{index-manage-app}}** tools in {{kib}} or the {{es}} [lifecycle API]({{es-apis}}operation/operation-indices-put-data-lifecycle).
+Add or change the data stream lifecycle with the **{{index-manage-app}}** or **Streams** tools in {{kib}} or the {{es}} [lifecycle API]({{es-apis}}operation/operation-indices-put-data-lifecycle).
 
-$$$configure-dlm-searchable-snapshots$$$
-{applies_to}`stack: ga 9.5+` {applies_to}`serverless: unavailable` To move older backing indices to the frozen tier, include the **Frozen phase** or `frozen_after` in the following steps. Register a default snapshot repository first. The frozen duration must be shorter than the delete phase. For how conversion works, operational behavior, and troubleshooting blocked conversions, refer to [](/manage-data/lifecycle/data-stream/dlm-searchable-snapshots.md).
-
-:::::{tab-set}
-:group: kibana-api
-::::{tab-item} {{kib}}
-:sync: kibana
-
-<!-- To change the data retention settings for a data stream: -->
+:::::{applies-switch}
+::::{applies-item} serverless: ga
 
 1. Find **{{index-manage-app}}** in the navigation menu or use the [global search field](/explore-analyze/find-and-organize/find-apps-and-objects.md).
 1. Select the **Data Streams** tab.
 1. Search for the data stream.
 1. Select the data stream to view its details.
-1. In the data stream details pane:
+1. In the data stream details pane, click the actions icon {icon}`gear` and select **Edit data lifecycle**.
+1. You can choose to inherit lifecycle settings from the index template or customize the lifecycle for this data stream:
 
-   * {applies_to}`serverless: ga` Click the actions icon {icon}`gear` and select **Edit data lifecycle**.
-     You can choose to inherit lifecycle settings from the index template or do any of the following:
+   ![Edit data lifecycle page](/manage-data/images/elasticsearch-serverless-edit-data-lifecycle.png "=50%")
 
-     * On the **Successful data** tab, select the **Delete phase** to choose how long to retain your data, in days, hours, minutes, or seconds.
+   * On the **Successful data** tab, select the **Delete phase** to choose how long to retain your data, in days, hours, minutes, or seconds.
+    <!--TBD: This did not work for me, it always reverted to inheriting from the lifecycle instead. If you deselect the delete phase, {{es}} does not delete the data. -->
+   * On the **Failed data** tab, select **Enable failure store** to turn on a [failure store](/manage-data/data-store/data-streams/failure-store.md). Select how long to retain failure store data, in days, hours, minutes, or seconds.
 
-     <!--
-     TBD: This did not work for me, it always reverted to inheriting from the lifecycle instead.
-     If you deselect the delete phase, {{es}} does not delete the data.
-     -->
+1. Click **Apply** to save the changes.
 
-     * On the **Failed data** tab, select **Enable failure store** to turn on a [failure store](/manage-data/data-store/data-streams/failure-store.md). Select how long to retain failure store data, in days, hours, minutes, or seconds.
+Lifecycle changes apply to every backing index of the data stream.
 
-     Click **Apply** to save the changes.
-   * {applies_to}`stack: ga 9.5+` Click the actions icon {icon}`gear` and select **Edit data lifecycle**.
-     Select the **Data stream lifecycle** method. You can then choose to inherit lifecycle settings from the index template or do any of the following:
+::::
 
-     * On the **Successful data** tab:
+::::{applies-item} stack: ga 9.5+
 
-       Select the **Delete phase** to choose how long to retain your data, in days, hours, minutes, or seconds. If you deselect the delete phase, {{es}} does not delete the data.
+1. Find **{{index-manage-app}}** in the navigation menu or use the [global search field](/explore-analyze/find-and-organize/find-apps-and-objects.md).
+1. Select the **Data Streams** tab.
+1. Search for the data stream.
+1. Select the data stream to view its details.
+1. In the data stream details pane, click the actions icon {icon}`gear` and select **Edit data lifecycle**.
+1. Select the **Data stream lifecycle** method.
+1. You can choose to inherit lifecycle settings from the index template or customize the lifecycle for this data stream:
 
-       Select the **Frozen phase** to choose when to move your data to {{search-snaps}}, in days, hours, minutes, or seconds. This period must be shorter than the delete phase. To change the default snapshot repository, refer to [{{ech}}](/deploy-manage/tools/snapshot-and-restore/elastic-cloud-hosted.md#snapshot-repo-default) or [self-managed](/deploy-manage/tools/snapshot-and-restore/self-managed.md#snapshot-repo-default) instructions.
+   * On the **Successful data** tab:
 
-     * On the **Failed data** tab, select **Enable failure store** to turn on a [failure store](/manage-data/data-store/data-streams/failure-store.md). Select how long to retain failure store data, in days, hours, minutes, or seconds.
+     Select the **Delete phase** to choose how long to retain your data, in days, hours, minutes, or seconds. If you deselect the delete phase, {{es}} does not delete the data.
 
-     Click **Apply** to save the changes.
-   * {applies_to}`stack: ga 9.0-9.4` Select **Manage** → **Edit data retention**.
-     You can do any of the following:
+     Select the **Frozen phase** to choose when to move your data to {{search-snaps}}, in days, hours, minutes, or seconds. This period must be shorter than the delete phase. To change the default snapshot repository, refer to [{{ech}}](/deploy-manage/tools/snapshot-and-restore/elastic-cloud-hosted.md#snapshot-repo-default) or [self-managed](/deploy-manage/tools/snapshot-and-restore/self-managed.md#snapshot-repo-default) instructions.
+     $$$configure-dlm-searchable-snapshots$$$
 
-     * Select how long to retain your data, in days, hours, minutes, or seconds.
-     * Select **Keep data indefinitely**. The data stream stays managed but {{es}} does not delete the data. Managing a {{tsds}}, such as logs or metrics, helps {{es}} store your data even when you don't set a retention period.
-     * Turn off **Enable data retention** to stop data stream lifecycle management for this data stream.
+   * On the **Failed data** tab, select **Enable failure store** to turn on a [failure store](/manage-data/data-store/data-streams/failure-store.md). Select how long to retain failure store data, in days, hours, minutes, or seconds.
 
-1. Reopen the data stream flyout to confirm the change. Lifecycle changes apply to every backing index of the data stream.
+1. Click **Apply** to save the changes.
 
-   * {applies_to}`stack: ga 9.0-9.4` The flyout shows the effective data retention settings.
-   * {applies_to}`stack: ga 9.5+` The flyout shows the successful and failure ingest lifecycle details.
+1. Reopen the data stream flyout to confirm the change. The flyout shows the successful and failure ingest lifecycle details.
+
+Lifecycle changes apply to every backing index of the data stream.
+
+::::
+
+::::{applies-item} stack: ga 9.0-9.4
+
+1. Find **{{index-manage-app}}** in the navigation menu or use the [global search field](/explore-analyze/find-and-organize/find-apps-and-objects.md).
+1. Select the **Data Streams** tab.
+1. Search for the data stream.
+1. Select the data stream to view its details.
+1. In the data stream details pane, select **Manage** → **Edit data retention**.
+   You can do any of the following:
+
+   * Select how long to retain your data, in days, hours, minutes, or seconds.
+   * Select **Keep data indefinitely**. The data stream stays managed but {{es}} does not delete the data. Managing a {{tsds}}, such as logs or metrics, helps {{es}} store your data even when you don't set a retention period.
+   * Turn off **Enable data retention** to stop data stream lifecycle management for this data stream.
+
+1. Reopen the data stream flyout to confirm the change. The flyout shows the effective data retention settings.
+
+Lifecycle changes apply to every backing index of the data stream.
+
+::::
+
+:::::
 
 $$$data-retention-streams$$$
-Alternatively, you can use the **Streams** page in {{kib}}, which is a centralized interface for common data management tasks, including how your data streams retain data. Refer to [](/solutions/observability/streams/configure-retention.md).
-::::
-::::{tab-item} API
-:sync: api
+{applies_to}`serverless: ga` {applies_to}`stack: ga 9.2+` Alternatively, you can use the **Streams** page in {{kib}}, which is a centralized interface for common data management tasks, including how your data streams retain data. Refer to [](/solutions/observability/streams/configure-retention.md).
 
-To change the data retention settings for a data stream:
+::::{dropdown} API example
+
+To change the data retention settings for a data stream, use the {{es}} [lifecycle API]({{es-apis}}operation/operation-indices-put-data-lifecycle).
 
 * Set an indefinite retention period so {{es}} does not delete the data. For example:
 
@@ -118,7 +134,6 @@ To change the data retention settings for a data stream:
 
     1. The retention period of this data stream is 30 days. {{es}} can delete data older than 30 days.
 
-$$$configure-dlm-searchable-snapshots$$$
 {applies_to}`stack: ga 9.5+` {applies_to}`serverless: unavailable` Optionally add `frozen_after` so older backing indices become partially mounted {{search-snaps}} on the frozen tier. For example:
 
 ```console
@@ -182,8 +197,8 @@ GET my-data-stream-test/_lifecycle/explain
 1. The time since this index was [rolled over](/manage-data/lifecycle/index-lifecycle-management/rollover.md).
 1. The time used to determine when it's safe to delete this index and its data.
 1. The data retention for this index is at least 30 days, because the lifecycle was updated recently.
+
 ::::
-:::::
 
 ## Remove the lifecycle for a data stream [delete-lifecycle]
 ```{applies_to}
@@ -193,27 +208,37 @@ serverless: unavailable
 
 Remove the lifecycle with the **{{index-manage-app}}** tools in {{kib}} or the {{es}} [delete lifecycle API]({{es-apis}}operation/operation-indices-delete-data-lifecycle).
 
-:::::{tab-set}
-:group: kibana-api
-:::{tab-item} {{kib}}
-:sync: kibana
+:::::{applies-switch}
 
-To remove a data stream's lifecycle, open the data stream details in **{{index-manage-app}}** as described in [Set a data stream's lifecycle](#set-lifecycle). Then:
+::::{applies-item} stack: ga 9.5+
 
-1. In the data stream details pane, adjust the lifecycle settings:
+1. Find **{{index-manage-app}}** in the navigation menu or use the [global search field](/explore-analyze/find-and-organize/find-apps-and-objects.md).
+1. Select the **Data Streams** tab.
+1. Search for the data stream.
+1. Select the data stream to view its details.
+1. In the data stream details pane, click the actions icon {icon}`gear` and select **Edit data lifecycle**.
+1. On the **Successful data** tab, select the **Data stream lifecycle** method and deselect all optional phases.
+1. Click **Apply** to save the changes.
+1. Reopen the data stream flyout to confirm the change. **Successful ingest lifecycle** shows an infinity icon {icon}`infinity` to indicate that it keeps data indefinitely.
 
-   * {applies_to}`stack: ga 9.5+` Click the actions icon {icon}`gear` and select **Edit data lifecycle**. On the **Successful data** tab, select the **Data stream lifecycle** method and deselect all optional phases. Click **Apply** to save the changes.
-   * {applies_to}`stack: ga 9.0-9.4` Select **Manage** → **Edit data retention**. Turn off **Enable data retention** and save your changes.
-1. Reopen the data stream flyout to confirm the change.
+::::
+::::{applies-item} stack: ga 9.0-9.4
 
-   * {applies_to}`stack: ga 9.5+` **Successful ingest lifecycle** shows an infinity icon {icon}`infinity` to indicate that it keeps data indefinitely.
-   * {applies_to}`stack: ga 9.0-9.4` **Effective data retention** shows **Disabled**.
+1. Find **{{index-manage-app}}** in the navigation menu or use the [global search field](/explore-analyze/find-and-organize/find-apps-and-objects.md).
+1. Select the **Data Streams** tab.
+1. Search for the data stream.
+1. Select the data stream to view its details.
+1. In the data stream details pane, select **Manage** → **Edit data retention**.
+1. Turn off **Enable data retention** and save your changes.
+1. Reopen the data stream flyout to confirm the change. **Effective data retention** shows **Disabled**.
 
-<!-- NOTE: In 9.6 test these Kibana methods seem to have the same result as the API i.e. do make the stream `"managed_by_lifecycle": false` -->
+::::
 
-:::
-:::{tab-item} API
-:sync: api
+:::::
+
+<!-- TBD: In 9.6 test these Kibana methods don't seem to have the same result as the API i.e. do not make the stream `"managed_by_lifecycle": false` -->
+
+::::{dropdown} API example
 
 To remove a data stream's lifecycle:
 
@@ -249,8 +274,8 @@ GET my-data-stream-test/_lifecycle/explain
 1. The name of the backing index.
 1. The data stream lifecycle does not manage the index.
 1. {applies_to}`serverless: ga` {applies_to}`stack: ga 9.6+` The reason the data stream is not managed.
-:::
-:::::
+
+::::
 
 ## Related pages [update-data-stream-lifecycle-related]
 
