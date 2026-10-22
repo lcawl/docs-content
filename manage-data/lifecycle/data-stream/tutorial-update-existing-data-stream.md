@@ -31,7 +31,7 @@ To follow these steps, you need:
   * `manage_data_stream_lifecycle`, to update or remove the lifecycle. This privilege also covers the explain API.
   * `view_index_metadata`, if you only read lifecycle state with the explain API.
 
-* {applies_to}`stack: ga 9.5+` {applies_to}`serverless: unavailable` A default snapshot repository, if you move older backing indices to the frozen tier. Refer to [Manage snapshot repositories](/deploy-manage/tools/snapshot-and-restore/manage-snapshot-repositories.md).
+* {applies_to}`stack: ga 9.5+` {applies_to}`serverless: unavailable` A default snapshot repository and an [appropriate license]({{subscriptions}}) for searchable snapshots if you turn on frozen phase transitions. Refer to [Manage snapshot repositories](/deploy-manage/tools/snapshot-and-restore/manage-snapshot-repositories.md).
 
 ## Set a data stream's lifecycle [set-lifecycle]
 
@@ -55,6 +55,13 @@ Add or change the data stream lifecycle with the **{{index-manage-app}}** or **S
 
 1. Click **Apply** to save the changes.
 
+<!-- TO-DO: Dependent on https://github.com/elastic/docs-builder/pull/4541
+   :::{image} /manage-data/images/elasticsearch-serverless-edit-data-lifecycle.png
+   :screenshot:
+   :width: 50%
+   :::
+-->
+
 Lifecycle changes apply to every backing index of the data stream.
 
 ::::
@@ -68,6 +75,8 @@ Lifecycle changes apply to every backing index of the data stream.
 1. In the data stream details pane, click the actions icon {icon}`gear` and select **Edit data lifecycle**.
 1. Select the **Data stream lifecycle** method.
 1. You can choose to inherit lifecycle settings from the index template or customize the lifecycle for this data stream:
+
+   ![Edit data lifecycle page](/manage-data/images/elasticsearch-edit-data-lifecycle.png "=50%")
 
    * On the **Successful data** tab:
 
@@ -93,6 +102,9 @@ Lifecycle changes apply to every backing index of the data stream.
 1. Search for the data stream.
 1. Select the data stream to view its details.
 1. In the data stream details pane, select **Manage** → **Edit data retention**.
+
+   ![Edit data retention page](/manage-data/images/elasticsearch-edit-data-retention.png "=50%")
+
    You can do any of the following:
 
    * Select how long to retain your data, in days, hours, minutes, or seconds.
@@ -112,7 +124,7 @@ $$$data-retention-streams$$$
 
 ::::{dropdown} API example
 
-To change the data retention settings for a data stream, use the {{es}} [lifecycle API]({{es-apis}}operation/operation-indices-put-data-lifecycle).
+To update the lifecycle of a data stream, use the {{es}} [lifecycle API]({{es-apis}}operation/operation-indices-put-data-lifecycle):
 
 * Set an indefinite retention period so {{es}} does not delete the data. For example:
 
@@ -134,21 +146,21 @@ To change the data retention settings for a data stream, use the {{es}} [lifecyc
 
     1. The retention period of this data stream is 30 days. {{es}} can delete data older than 30 days.
 
-{applies_to}`stack: ga 9.5+` {applies_to}`serverless: unavailable` Optionally add `frozen_after` so older backing indices become partially mounted {{search-snaps}} on the frozen tier. For example:
+* {applies_to}`stack: ga 9.5+` {applies_to}`serverless: unavailable` Optionally add `frozen_after` so older backing indices become partially mounted {{search-snaps}} on the frozen tier. For example:
 
-```console
-PUT _data_stream/my-data-stream-test/_lifecycle
-{
-  "data_retention": "365d",
-  "frozen_after": "30d" <1>
-}
-```
+  ```console
+  PUT _data_stream/my-data-stream-test/_lifecycle
+  {
+    "data_retention": "365d",
+    "frozen_after": "30d" <1>
+  }
+  ```
 
-1. If you specify both `data_retention` and `frozen_after`, the latter duration must be shorter than the former.
+  1. If you specify both `data_retention` and `frozen_after`, the latter duration must be shorter than the former.
 
-In this example, backing indices older than 30 days are converted to frozen {{search-snaps}}.
-{{es}} can still delete indices when their `generation_time` exceeds the effective retention period, even after they are frozen.
-For how conversion works, operational behavior, and troubleshooting blocked conversions, refer to [](/manage-data/lifecycle/data-stream/dlm-searchable-snapshots.md).
+  In this example, backing indices older than 30 days are converted to frozen {{search-snaps}}.
+  {{es}} can still delete indices when their `generation_time` exceeds the effective retention period, even after they are frozen.
+  For prerequisites, how conversion works, and troubleshooting, refer to [](/manage-data/lifecycle/data-stream/dlm-searchable-snapshots.md).
 
 These lifecycle changes apply to every backing index of the data stream.
 To check the settings, use the {{es}} [explain API]({{es-apis}}operation/operation-indices-explain-data-lifecycle):
