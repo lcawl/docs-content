@@ -44,7 +44,57 @@ Use the [health report API]({{es-apis}}operation/operation-health-report) to vie
 GET _health_report/dlm_frozen_transitions
 ```
 
-<!-- TO-DO: Add an example response -->
+Example response:
+
+```console-result
+{
+  "cluster_name": "my-cluster",
+  "indicators": {
+    "dlm_frozen_transitions": {
+      "status": "yellow",
+      "symptom": "An issue affecting DLM frozen-tier transitions was detected",
+      "details": {
+        "overdue_indices_count_by_state": {
+          "unmarked": 1
+        },
+        "default_repository_configured": true,
+        "overdue_indices_sample": [
+          {
+            "index_name": ".ds-my-data-stream-test-2026.10.17-000001",
+            "transition_state": "unmarked"
+          }
+        ],
+        "service_running": true,
+        "overdue_indices_count": 1,
+        "transitions_enabled": true
+      },
+      "impacts": [
+        {
+          "id": "elasticsearch:health:dlm_frozen_transitions:impact:frozen_transition_blocked",
+          "severity": 3,
+          "description": "Data stream backing indices may be delayed or blocked from transitioning to the frozen tier. Storage size and cost management could be impacted.",
+          "impact_areas": [
+            "deployment_management"
+          ]
+        }
+      ],
+      "diagnosis": [
+        {
+          "id": "elasticsearch:health:dlm_frozen_transitions:diagnosis:eligible_indices_unmarked",
+          "cause": "Some indices are eligible for conversion to the frozen tier but have not been marked for conversion, even though a default snapshot repository is configured. 1 index is affected.",
+          "action": "Check the current master node's logs for errors related to the data stream lifecycle and the DLM frozen transition service.",
+          "help_url": "https://ela.st/health-dlm-frozen-transitions",
+          "affected_resources": {
+            "indices": [
+              ".ds-my-data-stream-test-2026.10.17-000001"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
+```
 
 Read the `status`, `symptom`, and each `diagnosis.action`.
 In `details`, check `transitions_enabled`, `default_repository_configured`, and `overdue_indices_count_by_state` (`unmarked`, `marked`, or `queued`).
