@@ -26,8 +26,8 @@ To create the data stream in this tutorial, you need:
 
 * Access to [{{dev-tools-app}} Console](/explore-analyze/query-filter/tools/console.md) in {{kib}}, or another way to send {{es}} API requests.
 * These privileges on the data stream name. Privileges on a data stream also apply to its backing indices. Refer to [Granting privileges for data streams and aliases](/deploy-manage/users-roles/cluster-or-deployment-auth/granting-privileges-for-data-streams-aliases.md).
-    * [Cluster privilege](elasticsearch://reference/elasticsearch/security-privileges.md#privileges-list-cluster) `manage_index_templates`, to create the index template.
-    * [Index privileges](elasticsearch://reference/elasticsearch/security-privileges.md#privileges-list-indices) `create_index`, `create_doc`, and `view_index_metadata`, to create the stream, index documents with the `create` action, and read the lifecycle.
+  * [Cluster privilege](elasticsearch://reference/elasticsearch/security-privileges.md#privileges-list-cluster) `manage_index_templates`, to create the index template.
+  * [Index privileges](elasticsearch://reference/elasticsearch/security-privileges.md#privileges-list-indices) `create_index`, `create_doc`, and `view_index_metadata`, to create the stream, index documents with the `create` action, and read the lifecycle.
 * {applies_to}`stack: ga 9.3+` The **All** privilege for the **Streams** feature in {{kib}}, if you create the stream in [Streams](/solutions/observability/streams/streams.md). You still need `create_index`.
 * {applies_to}`stack: ga 9.5+` {applies_to}`serverless: unavailable` A default snapshot repository, if you move older backing indices to the frozen tier. Refer to [Manage snapshot repositories](/deploy-manage/tools/snapshot-and-restore/manage-snapshot-repositories.md).
 
@@ -50,7 +50,7 @@ Include the `data_stream` object, define the lifecycle in the template (or in a 
 1. On the **Index Templates** tab, click **Create template**.
 1. On the **Logistics** page, enter a name and an index pattern that matches the data stream. For this tutorial, use `my-data-stream-test`.
 1. Turn on **Create data stream**.
-1. Select **Delete phase**, and set **Delete after** to 7 days. This sets `data_retention` to `7d`.
+1. Select **Delete phase** (**Data retention** in earlier versions), and set it to delete after 7 days.
 1. In **Priority**, enter a value higher than `200`.
 1. Complete the rest of the wizard. On the **Review** page, click **Create template**. For the other wizard pages, refer to [Index templates](/manage-data/data-store/templates.md).
 
