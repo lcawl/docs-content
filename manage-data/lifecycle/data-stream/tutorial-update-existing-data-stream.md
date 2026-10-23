@@ -25,7 +25,6 @@ For a comparison of these features, go to [](/manage-data/lifecycle.md).
 To follow these steps, you need:
 
 * An existing data stream. To create one, refer to [Create a data stream with a lifecycle](/manage-data/lifecycle/data-stream/tutorial-create-data-stream-with-lifecycle.md).
-* Access to [{{dev-tools-app}} Console](/explore-analyze/query-filter/tools/console.md) in {{kib}}, or another way to send {{es}} API requests.
 * These [index privileges](elasticsearch://reference/elasticsearch/security-privileges.md#privileges-list-indices) on the data stream and its backing indices.
 
   * `manage_data_stream_lifecycle`, to update or remove the lifecycle. This privilege also covers the explain API.
