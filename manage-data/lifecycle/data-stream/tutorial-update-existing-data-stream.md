@@ -23,12 +23,8 @@ For {{ilm-init}}, refer to [](/manage-data/lifecycle/index-lifecycle-management.
 To follow these steps, you need:
 
 * A classic data stream. To create one, refer to [](/manage-data/lifecycle/data-stream/tutorial-create-data-stream-with-lifecycle.md).
-* These [index privileges](elasticsearch://reference/elasticsearch/security-privileges.md#privileges-list-indices) on the data stream and its backing indices.
-
-  * `manage_data_stream_lifecycle`, to update or remove the lifecycle. This privilege also covers the explain API.
-  * `view_index_metadata`, if you only read lifecycle state with the explain API.
-
-* {applies_to}`stack: ga 9.5+` {applies_to}`serverless: unavailable` A default snapshot repository and an [appropriate license]({{subscriptions}}) for searchable snapshots if you turn on frozen phase transitions. Refer to [Manage snapshot repositories](/deploy-manage/tools/snapshot-and-restore/manage-snapshot-repositories.md).
+* The `manage_data_stream_lifecycle` [index privilege](elasticsearch://reference/elasticsearch/security-privileges.md#privileges-list-indices) on the data stream and its backing indices.
+* {applies_to}`stack: ga 9.5+` {applies_to}`serverless: unavailable` A default snapshot repository and an [appropriate license]({{subscriptions}}) for {{search-snaps}} if you turn on frozen phase transitions. Refer to [Manage snapshot repositories](/deploy-manage/tools/snapshot-and-restore/manage-snapshot-repositories.md).
 
 ## Set a data stream's lifecycle [set-lifecycle]
 
