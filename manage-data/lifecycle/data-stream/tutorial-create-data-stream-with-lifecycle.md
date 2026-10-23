@@ -4,41 +4,38 @@ mapped_pages:
 applies_to:
   stack: ga
   serverless: ga
-description: Step-by-step tutorial for creating an Elasticsearch data stream with a lifecycle. Set retention on an index template, create the stream, and confirm the lifecycle.
-type: tutorial
+description: Create an Elasticsearch data stream with a lifecycle. Create an index template with data retention, create a data stream, and confirm the lifecycle.
+type: how-to
 products:
   - id: elasticsearch
 ---
 
 # Create a data stream with a lifecycle [tutorial-manage-new-data-stream]
 
-Create a new {{es}} data stream and set how long to keep its data before any documents arrive. This tutorial is for you if you already know [index templates](/manage-data/data-store/templates.md) and [data streams](/manage-data/data-store/data-streams.md), and you want retention in place from the first [backing index](/manage-data/data-store/data-streams.md#backing-indices).
+Create a classic {{es}} data stream with a configured lifecycle.
+Learn how to set the retention period for your data and to retrieve the lifecycle configuration details.
 
-By the end of this tutorial, you can:
-
-* Create an index template that matches a data stream name and sets `data_retention`.
-* Create that data stream.
-* Read the lifecycle for the data stream and for one backing index.
+For wired data streams, go to [](/solutions/observability/streams/get-data-in.md) and [](/solutions/observability/streams/configure-retention.md).
 
 ## Before you begin [create-data-stream-lifecycle-prereqs]
 
-To create the data stream in this tutorial, you need:
+To follow these steps, you need:
 
-* Access to [{{dev-tools-app}} Console](/explore-analyze/query-filter/tools/console.md) in {{kib}}, or another way to send {{es}} API requests.
-* These privileges on the data stream name. Privileges on a data stream also apply to its backing indices. Refer to [Granting privileges for data streams and aliases](/deploy-manage/users-roles/cluster-or-deployment-auth/granting-privileges-for-data-streams-aliases.md).
-  * [Cluster privilege](elasticsearch://reference/elasticsearch/security-privileges.md#privileges-list-cluster) `manage_index_templates`, to create the index template.
-  * [Index privileges](elasticsearch://reference/elasticsearch/security-privileges.md#privileges-list-indices) `create_index`, `create_doc`, and `view_index_metadata`, to create the stream, index documents with the `create` action, and read the lifecycle.
-* {applies_to}`stack: ga 9.3+` The **All** privilege for the **Streams** feature in {{kib}}, if you create the stream in [Streams](/solutions/observability/streams/streams.md). You still need `create_index`.
-* {applies_to}`stack: ga 9.5+` {applies_to}`serverless: unavailable` A default snapshot repository, if you move older backing indices to the frozen tier. Refer to [Manage snapshot repositories](/deploy-manage/tools/snapshot-and-restore/manage-snapshot-repositories.md).
+* [Cluster privilege](elasticsearch://reference/elasticsearch/security-privileges.md#privileges-list-cluster) `manage_index_templates`, to create the index template.
+* [Index privileges](elasticsearch://reference/elasticsearch/security-privileges.md#privileges-list-indices):
 
-For an overview of how a data stream lifecycle stores and deletes data, refer to [](/manage-data/lifecycle/data-stream.md).
+  * `create_index`, `create_doc`, and `view_index_metadata` to create the stream, index documents, and read the lifecycle.
+  * `auto_configure` if you use the bulk indexing API example, which adds mappings for fields that aren't defined in the template.
+  * {applies_to}`stack: ga 9.3+` `manage` if you create the stream in **Streams**, which writes data stream settings.
+
+  Refer to [Granting privileges for data streams and aliases](/deploy-manage/users-roles/cluster-or-deployment-auth/granting-privileges-for-data-streams-aliases.md).
+* {applies_to}`stack: ga 9.3+` The **All** privilege for the **Streams** feature in {{kib}}, if you use the **Streams** app.
+* {applies_to}`stack: ga 9.5+` {applies_to}`serverless: unavailable` A default snapshot repository and an [appropriate license]({{subscriptions}}) for {{search-snaps}} if you turn on frozen phase transitions. Refer to [Manage snapshot repositories](/deploy-manage/tools/snapshot-and-restore/manage-snapshot-repositories.md).
 
 ## Create an index template [create-index-template-with-lifecycle]
 
 A data stream requires a matching [index template](/manage-data/data-store/templates.md).
-Set the lifecycle on that template, in the same place you set mappings and index settings, so every new stream that matches the pattern gets the same retention.
-
-Include the `data_stream` object, define the lifecycle in the template (or in a component template), and set the priority higher than `200` so it doesn't collide with built-in templates. Refer to [Avoid index pattern collisions](/manage-data/data-store/templates.md#avoid-index-pattern-collisions).
+Set the lifecycle on that template, in the same place you set mappings and index settings, so every new stream that matches the pattern inherits the lifecycle details.
 
 :::::{tab-set}
 :group: kibana-api
@@ -48,35 +45,31 @@ Include the `data_stream` object, define the lifecycle in the template (or in a 
 
 1. Find **{{index-manage-app}}** in the navigation menu or use the [global search field](/explore-analyze/find-and-organize/find-apps-and-objects.md).
 1. On the **Index Templates** tab, click **Create template**.
-1. On the **Logistics** page, enter a name and an index pattern that matches the data stream. For this tutorial, use `my-data-stream-test`.
+1. On the **Logistics** page, enter a name and an index pattern that matches the data stream. For example, use `my-data-stream-test*` for the index pattern.
+
+   {applies_to}`stack: ga 9.3+` To use the **Streams** app in subsequent steps your index pattern must contain a wildcard (`*`).
+
 1. Turn on **Create data stream**.
-1. Select **Delete phase** (**Data retention** in earlier versions), and set it to delete after 7 days.
-1. In **Priority**, enter a value higher than `200`.
+1. Select **Delete phase** (**Data retention** in earlier versions), and choose how long to retain your data, in days, hours, minutes, or seconds.
+1. {applies_to}`stack: ga 9.5+` {applies_to}`serverless: unavailable` Optional: Select the **Frozen phase** to choose when to move your data to {{search-snaps}}, in days, hours, minutes, or seconds. This period must be shorter than the delete phase. Refer to [](/manage-data/lifecycle/data-stream/dlm-searchable-snapshots.md).
+1. In **Priority**, enter a value higher than `200` so it doesn't collide with built-in templates. Refer to [Avoid index pattern collisions](/manage-data/data-store/templates.md#avoid-index-pattern-collisions).
 1. Complete the rest of the wizard. On the **Review** page, click **Create template**. For the other wizard pages, refer to [Index templates](/manage-data/data-store/templates.md).
-
-:::{note}
-:applies_to: {"stack": "ga 9.5+", "serverless": "unavailable"}
-
-To move older backing indices to the frozen tier, select **Frozen phase** and set **Move after**. For example, set **Move after** to 30 days and **Delete after** to 365 days. Register a default snapshot repository before you index data. Refer to [](/manage-data/lifecycle/data-stream/dlm-searchable-snapshots.md).
-:::
-
 ::::
-
 ::::{tab-item} API
 :sync: api
 
-Use the [create index template API]({{es-apis}}operation/operation-indices-put-index-template). 
+Use the [create index template API]({{es-apis}}operation/operation-indices-put-index-template).
 For example:
 
 ```console
 PUT _index_template/my-index-template
 {
-  "index_patterns": ["my-data-stream-test"], <1>
-  "data_stream": { },
-  "priority": 500,
-  "template": {
-    "lifecycle": {
-      "data_retention": "7d"
+  "index_patterns": ["my-data-stream-test*"], <1>
+  "data_stream": { }, <2>
+  "priority": 500, <3>
+  "template": { 
+    "lifecycle": { <4>
+      "data_retention": "7d" <5>
     }
   },
   "_meta": {
@@ -85,23 +78,27 @@ PUT _index_template/my-index-template
 }
 ```
 
-1. The index template applies to a data stream named `my-data-stream-test`. You can use a wildcard (`*`) in the index pattern to match every data stream whose name matches the pattern, whether you create the stream with the API or by indexing.
+1. You can use a wildcard (`*`) in the index pattern to match every data stream whose name matches the pattern.
+1. Include the `data_stream` object to enable data streams.
+1. Set the priority higher than `200` so it doesn't collide with built-in templates. Refer to [Avoid index pattern collisions](/manage-data/data-store/templates.md#avoid-index-pattern-collisions).
+1. Define the lifecycle in the template section or in a [component template](/manage-data/data-store/templates.md#component-templates).
+1. Choose how long to retain your data, in days, hours, minutes, or seconds.
 
 :::{tip}
 :applies_to: {"stack": "ga 9.5+", "serverless": "unavailable"}
 
-To move older backing indices to the frozen tier, include `frozen_after` in the lifecycle on the template. For requirements and how conversion works, refer to [](/manage-data/lifecycle/data-stream/dlm-searchable-snapshots.md). For example:
+To move older backing indices to {{search-snaps}}, include `frozen_after` in the lifecycle on the template. For requirements and how conversion works, refer to [](/manage-data/lifecycle/data-stream/dlm-searchable-snapshots.md). For example:
 
 ```console
 PUT _index_template/my-index-template
 {
-  "index_patterns": ["my-data-stream-test"],
+  "index_patterns": ["my-data-stream-test*"],
   "data_stream": { },
   "priority": 500,
   "template": {
     "lifecycle": {
       "data_retention": "365d",
-      "frozen_after": "30d"
+      "frozen_after": "30d" <1>
     }
   },
   "_meta": {
@@ -110,14 +107,10 @@ PUT _index_template/my-index-template
 }
 ```
 
-Confirm that a default snapshot repository is registered before you index data. Refer to [Manage snapshot repositories](/deploy-manage/tools/snapshot-and-restore/manage-snapshot-repositories.md).
+1. This period must be shorter than the `data_retention` period if both are specified.
 :::
-
 ::::
-
 :::::
-
-**Result:** {{es}} acknowledges the template. The later steps use the data stream name `my-data-stream-test`.
 
 ## Create a data stream [create-data-stream-with-lifecycle]
 
@@ -136,6 +129,8 @@ Otherwise, the lifecycle on the template doesn't apply.
     1. Click **Create classic stream**.
     1. Select the index template, enter the stream name, and click **Create**.
 
+<!-- TBD: These steps don't work for my in 9.4.9. It does not find my template. -->
+
 ::::
 
 ::::{tab-item} API
@@ -145,11 +140,13 @@ Create the stream in either of these ways:
 
 * With the [create data stream API]({{es-apis}}operation/operation-indices-create-data-stream). For example:
 
-    ```console
-    PUT _data_stream/my-data-stream-test
-    ```
+  ```console
+  PUT _data_stream/my-data-stream-test
+  ```
 
-* With an [indexing request](/manage-data/data-store/data-streams/use-data-stream.md#add-documents-to-a-data-stream) that targets the stream name. For example:
+  The stream's name must match one of your template's index patterns.
+
+* With an [indexing request](/manage-data/data-store/data-streams/use-data-stream.md#add-documents-to-a-data-stream). For example:
 
     ```console
     PUT my-data-stream-test/_bulk
@@ -160,14 +157,11 @@ Create the stream in either of these ways:
     ```
 
 ::::
-
 :::::
-
-**Result:** The data stream exists and uses the lifecycle from the template. The API examples use the name `my-data-stream-test`.
 
 ## Retrieve lifecycle information [retrieve-lifecycle-information]
 
-Confirm that the stream uses the retention from the template, and then check that same lifecycle on one backing index.
+Confirm that the stream uses the lifecycle from the template and then check the state of a [backing index](/manage-data/data-store/data-streams.md#backing-indices).
 
 :::::{tab-set}
 :group: kibana-api
@@ -178,7 +172,7 @@ Confirm that the stream uses the retention from the template, and then check tha
 1. Find **{{index-manage-app}}** in the navigation menu or use the [global search field](/explore-analyze/find-and-organize/find-apps-and-objects.md).
 1. Select the **Data Streams** tab.
 1. Search for the data stream, and then select it.
-1. In the flyout, check **Data retention** and **Effective data retention**. For the stream in this tutorial, both show 7 days.
+1. In the flyout, check **Data retention** and **Effective data retention**. For this example stream, both show 7 days.
 
 :::{image} /manage-data/images/elasticsearch-reference-lifecycle-status.png
 :alt: Data stream details flyout showing data retention
@@ -190,11 +184,11 @@ Confirm that the stream uses the retention from the template, and then check tha
 ::::{tab-item} API
 :sync: api
 
-Use the [get data stream lifecycle API]({{es-apis}}operation/operation-indices-get-data-lifecycle) to see the lifecycle on the data stream.
+Use the [get data stream lifecycle API]({{es-apis}}operation/operation-indices-get-data-lifecycle) to see the lifecycle configuration details.
 For example:
 
 ```console
-GET _data_stream/my-data-stream-test/_lifecycle
+GET _data_stream/my-data-stream-test*/_lifecycle
 ```
 
 **Result:**
@@ -219,61 +213,52 @@ GET _data_stream/my-data-stream-test/_lifecycle
 1. The name of your data stream.
 2. Whether the data stream lifecycle is turned on for this data stream.
 3. The retention period configured for data in this data stream.
-4. The retention period that the data stream lifecycle applies. {{es}} keeps this data for at least 7 days, and can delete it later.
+4. The retention period that the data stream lifecycle applies. {{es}} keeps this data for at least 7 days and can delete it later.
 
-To see the lifecycle on one backing index, look up the index name, and then use the [explain data stream lifecycle API]({{es-apis}}operation/operation-indices-explain-data-lifecycle). {{es}} names each backing index `.ds-<stream>-<date>-<generation>`, so a request to `.ds-my-data-stream-test` doesn't match an index.
+Use the [explain data stream lifecycle API]({{es-apis}}operation/operation-indices-explain-data-lifecycle) to view lifecycle details for the backing indices.
+For example:
 
-1. Get the data stream with the [get data stream API]({{es-apis}}operation/operation-indices-get-data-stream), and copy an `index_name` from `indices`. For example:
-
-    ```console
-    GET _data_stream/my-data-stream-test
-    ```
-
-    The name looks like `.ds-my-data-stream-test-2023.04.19-000001`. The date and generation in your response differ.
-
-1. Explain that backing index. This example uses the name from the sample response. Replace it with the `index_name` you copied. For example:
-
-    ```console
-    GET .ds-my-data-stream-test-2023.04.19-000001/_lifecycle/explain
-    ```
+```console
+GET my-data-stream-test*/_lifecycle/explain
+```
 
 **Result:**
 
 ```console-result
-{
-  "indices": {
-    ".ds-my-data-stream-test-2023.04.19-000001": {
-      "index": ".ds-my-data-stream-test-2023.04.19-000001",      <1>
-      "managed_by_lifecycle": true,                               <2>
-      "index_creation_date_millis": 1681918009501,
-      "time_since_index_creation": "1.6m",                  <3>
-      "lifecycle": {                                        <4>
-        "enabled": true,
-        "data_retention": "7d"
+  {
+    "indices": {
+      ".ds-my-data-stream-test-2026.10.23-000001"": {
+        "index": ".ds-my-data-stream-test-2026.10.23-000001",      <1>
+        "managed_by_lifecycle": true,                               <2>
+        "index_creation_date_millis": 1792718438578,
+        "time_since_index_creation": "22.79m",                  <3>
+        "lifecycle": {                                        <4>
+          "enabled": true,
+          "data_retention": "7d",
+          "effective_retention": "7d",
+          "retention_determined_by": "data_stream_configuration"
+        }
       }
     }
   }
-}
 ```
 
 1. The name of the backing index.
-2. Whether the built-in data stream lifecycle manages this index.
+2. Whether the data stream lifecycle manages this index.
 3. Time since the index was created.
 4. The lifecycle configuration applied to this backing index.
 
 ::::
-
 :::::
 
 ## Next steps [create-data-stream-lifecycle-next-steps]
 
 * To change or remove the lifecycle on a stream that already exists, refer to [Update the lifecycle of a data stream](/manage-data/lifecycle/data-stream/tutorial-update-existing-data-stream.md).
 * To see how effective retention is calculated, refer to [Setting retention for {{es}} data streams](/manage-data/lifecycle/data-stream/tutorial-data-stream-retention.md).
-* To move older backing indices to searchable snapshots, refer to [{{search-snaps-cap}} for data streams](/manage-data/lifecycle/data-stream/dlm-searchable-snapshots.md).
-* To move a stream from {{ilm-init}} to a data stream lifecycle, refer to [Migrating {{ilm-init}}-managed data streams to data stream lifecycle](/manage-data/lifecycle/data-stream/tutorial-migrate-ilm-managed-data-stream-to-data-stream-lifecycle.md).
 
 ## Related pages [create-data-stream-lifecycle-related]
 
-* [Data stream lifecycle](/manage-data/lifecycle/data-stream.md)
-* [Data streams](/manage-data/data-store/data-streams.md)
-* [Index templates](/manage-data/data-store/templates.md)
+* [](/manage-data/data-store/data-streams.md)
+* [](/manage-data/lifecycle/data-stream.md)
+* [](/manage-data/data-store/templates.md)
+* [](/solutions/observability/streams/streams.md)
