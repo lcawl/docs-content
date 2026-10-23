@@ -4,27 +4,25 @@ mapped_pages:
 applies_to:
   stack: ga
   serverless: ga
-description: Update the lifecycle of an existing Elasticsearch data stream. Change retention, move older data to the frozen tier, or remove the lifecycle.
 type: how-to
+description: Update the lifecycle of an Elasticsearch data stream. Change its data phases or remove the lifecycle.
 products:
   - id: elasticsearch
 ---
 
 # Update the lifecycle of a data stream [tutorial-manage-existing-data-stream]
 
-Change how long an existing {{es}} data stream keeps its data, or remove that lifecycle. These steps apply when the data stream already exists. They do not change the index template that created it.
+Change the lifecycle configuration for a classic {{es}} data stream, such as its data retention or phases.
 
-:::{note}
-These steps are for data stream lifecycle only.
+For wired data streams, go to [](/solutions/observability/streams/configure-retention.md).
+
 For {{ilm-init}}, refer to [](/manage-data/lifecycle/index-lifecycle-management.md).
-For a comparison of these features, go to [](/manage-data/lifecycle.md).
-:::
 
 ## Before you begin [update-data-stream-lifecycle-prereqs]
 
 To follow these steps, you need:
 
-* An existing data stream. To create one, refer to [Create a data stream with a lifecycle](/manage-data/lifecycle/data-stream/tutorial-create-data-stream-with-lifecycle.md).
+* A classic data stream. To create one, refer to [](/manage-data/lifecycle/data-stream/tutorial-create-data-stream-with-lifecycle.md).
 * These [index privileges](elasticsearch://reference/elasticsearch/security-privileges.md#privileges-list-indices) on the data stream and its backing indices.
 
   * `manage_data_stream_lifecycle`, to update or remove the lifecycle. This privilege also covers the explain API.
