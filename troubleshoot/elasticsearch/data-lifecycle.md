@@ -10,7 +10,7 @@ Use the topics in this section to check the {{ilm}} ({{ilm-init}}) and {{slm}} (
 
 * [](/troubleshoot/elasticsearch/start-ilm.md)
 * [](/troubleshoot/elasticsearch/index-lifecycle-management-errors.md)
-* [](/troubleshoot/elasticsearch/frozen-tier-transitions-blocked.md)
+* [](/troubleshoot/elasticsearch/data-stream-frozen-transition.md)
 
 For how these features work, refer to [Data lifecycle](/manage-data/lifecycle.md).
 

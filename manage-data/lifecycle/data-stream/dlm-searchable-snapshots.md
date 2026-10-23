@@ -16,7 +16,7 @@ This frozen transition feature lets you retain data for long periods at low stor
 
 This page explains how frozen transitions work and what you need before they can run.
 To configure `frozen_after` on a new or existing data stream, refer to [Next steps](/manage-data/lifecycle/data-stream/dlm-searchable-snapshots.md#next-steps).
-If conversions are blocked, refer to [Backing indices are not moving to the frozen tier](/troubleshoot/elasticsearch/frozen-tier-transitions-blocked.md).
+If conversions are blocked, refer to [Backing indices are not moving to the frozen tier](/troubleshoot/elasticsearch/data-stream-frozen-transition.md).
 
 ## Requirements [dlm-frozen-transition-requirements]
 
@@ -60,7 +60,7 @@ If a conversion is interrupted, {{dlm-init}} might leave behind orphaned clone i
 
 ## Troubleshooting [dlm-frozen-transition-troubleshooting]
 
-If backing indices older than `frozen_after` are not converting to frozen {{search-snaps}}, refer to [Backing indices are not moving to the frozen tier](/troubleshoot/elasticsearch/frozen-tier-transitions-blocked.md).
+If backing indices older than `frozen_after` are not converting to frozen {{search-snaps}}, refer to [Backing indices are not moving to the frozen tier](/troubleshoot/elasticsearch/data-stream-frozen-transition.md).
 
 ## Next steps [next-steps]
 
@@ -73,4 +73,4 @@ If backing indices older than `frozen_after` are not converting to frozen {{sear
 - [Data stream retention](/manage-data/lifecycle/data-stream/tutorial-data-stream-retention.md)
 - [{{search-snaps-cap}}](/deploy-manage/tools/snapshot-and-restore/searchable-snapshots.md)
 - [Data tiers](/manage-data/lifecycle/data-tiers.md)
-- [Backing indices are not moving to the frozen tier](/troubleshoot/elasticsearch/frozen-tier-transitions-blocked.md)
+- [Backing indices are not moving to the frozen tier](/troubleshoot/elasticsearch/data-stream-frozen-transition.md)

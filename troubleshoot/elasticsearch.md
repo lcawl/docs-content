@@ -36,7 +36,7 @@ This section helps you fix issues with {{es}} deployments.
 
 * [](/troubleshoot/elasticsearch/start-ilm.md)
 * [](/troubleshoot/elasticsearch/index-lifecycle-management-errors.md)
-* [](/troubleshoot/elasticsearch/frozen-tier-transitions-blocked.md)
+* [](/troubleshoot/elasticsearch/data-stream-frozen-transition.md)
 
 ## Management [troubleshooting-management]
 

@@ -57,7 +57,7 @@ toc:
         children:
           - file: elasticsearch/start-ilm.md
           - file: elasticsearch/index-lifecycle-management-errors.md
-          - file: elasticsearch/frozen-tier-transitions-blocked.md
+          - file: elasticsearch/data-stream-frozen-transition.md
       - file: elasticsearch/file-based-recovery.md
       - file: elasticsearch/troubleshooting-upgrades.md
       - file: elasticsearch/troubleshooting-upgrade-assistant.md
