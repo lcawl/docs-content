@@ -14,7 +14,7 @@ products:
 
 # Elastic Cloud Serverless connector for Claude [elastic-claude-connector]
 
-The [Elastic Cloud Serverless connector](https://claude.com/marketplace/connectors/elastic-cloud-serverless) is an official, Anthropic-verified [Claude connector](https://claude.com/docs/connectors/getting-started) that connects Claude to the [{{agent-builder}} Model Context Protocol (MCP) server](/explore-analyze/ai-features/agent-builder/mcp-server.md) of an {{serverless-full}} project.
+The [Elastic Cloud Serverless connector](https://claude.com/marketplace/connectors/elastic-cloud-serverless) is an official, Anthropic-verified [Claude connector](https://claude.com/docs/connectors/getting-started) that connects Claude to the [{{agent-builder}} Model Context Protocol (MCP) server](/explore-analyze/ai-features/agent-builder/mcp-server.md) of an {{serverless-full}} project. This connector is not the [Elastic MCP service](/explore-analyze/ai-features/elastic-mcp-service.md) at `https://mcp.elastic.co`.
 After you connect it, Claude can use {{agent-builder}} tools to search and analyze the data in your project with your own permissions.
 
 The connector is listed in the Claude connectors directory, so you can add it without configuring a custom connector.

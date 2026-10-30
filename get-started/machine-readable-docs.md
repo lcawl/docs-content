@@ -97,7 +97,7 @@ There is no per-page OKF endpoint. The bundle is the only distribution format.
 ## Connect an AI agent to the docs via MCP [docs-mcp-server]
 
 :::{important}
-This server gives agents access to Elastic **documentation**. To give an agent tools that query your own Elasticsearch data or Kibana resources, use the [{{agent-builder}} MCP server](/explore-analyze/ai-features/agent-builder/mcp-server.md) instead.
+This server gives agents access to Elastic **documentation**. To give an agent access to your own Elastic data, compare the [Elastic MCP service](/explore-analyze/ai-features.md#elastic-mcp-service) and the [{{agent-builder}} MCP server](/explore-analyze/ai-features/agent-builder/mcp-server.md). The {{agent-builder}} MCP server remains the way to use {{agent-builder}} tools.
 :::
 
 The Elastic Docs MCP server is available at:

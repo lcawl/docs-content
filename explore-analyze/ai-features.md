@@ -79,6 +79,23 @@ When you want a managed workflow for text—embedding generation, field mapping,
 
 [Automatic Import](/explore-analyze/ai-features/automatic-import.md) uses an LLM to help you build a custom Elastic integration from a data sample when no prebuilt integration exists for your source. It applies across solutions that use {{agent}} and integrations, including {{observability}} and {{elastic-sec}}.
 
+### Elastic MCP service [elastic-mcp-service]
+
+The [Elastic MCP service](/explore-analyze/ai-features/elastic-mcp-service.md) is a hosted MCP server at `https://mcp.elastic.co`. You connect an AI client once and work with the {{serverless-short}} projects you can access. Calls run in those projects, with your permissions.
+
+This service and the {{agent-builder}} MCP server are both available:
+
+- Use the Elastic MCP service when you want one hosted URL for your {{serverless-short}} projects. It does not include {{agent-builder}} tools, and it does not support {{stack}}, {{ech}}, or projects that use PrivateLink.
+- Use the [{{agent-builder}} MCP server](/explore-analyze/ai-features/agent-builder/mcp-server.md) when you want {{agent-builder}} tools, including custom tools, for one project or deployment. It works on {{serverless-short}} and on {{stack}}. The [Elastic Cloud Serverless connector for Claude](/explore-analyze/ai-features/claude-connector.md) uses this server.
+
+Other ways to give an agent Elastic context are separate from both servers:
+
+- [Docs MCP server](/get-started/machine-readable-docs.md): Elastic documentation. It does not connect to your data.
+- [AI agent skills](/explore-analyze/ai-features/agent-skills.md): Elastic procedures for a coding agent. Skills don't connect the agent to a project. You can use them with either MCP server.
+- [{{context-engine}}](/explore-analyze/ai-features/context-engine.md): Reusable context that agents retrieve. It is not a connection from an external client.
+- [Elastic CLI](https://www.elastic.co/docs/reference/elastic-cli/cli): Command-line access to Elastic.
+- [Security MCP App](/solutions/security/mcp-app/elastic-security-mcp-app.md): A local app that opens interactive {{elastic-sec}} dashboards in an AI client.
+
 ## AI-powered features in the {{es}} solution/project type
 
 The [{{es}}](/solutions/search.md) solution view (or project type in {{serverless-short}}) includes certain AI-powered features beyond the core {{es}} capabilities available on the Elastic platform.
@@ -93,7 +110,9 @@ The [{{es}}](/solutions/search.md) solution view (or project type in {{serverles
 
 ### Model Context Protocol (MCP) servers
 
-Elastic offers two MCP server options for connecting agents to your {{es}} data. The {{agent-builder}} MCP server is the recommended approach for {{es}} 9.2+ deployments and {{serverless-short}} projects, offering access to built-in and custom tools. For older {{es}} versions without {{agent-builder}}, you can use the `mcp-elasticsearch` server, which has a limited tool set.
+These servers connect an agent to {{es}} data in one deployment or project. For one hosted URL across the {{serverless-short}} projects you can access, use the [Elastic MCP service](#elastic-mcp-service). That service does not include {{agent-builder}} tools.
+
+The {{agent-builder}} MCP server exposes built-in and custom tools for {{es}} 9.2+ deployments and {{serverless-short}} projects. For older {{es}} versions without {{agent-builder}}, you can use the `mcp-elasticsearch` server, which has a limited tool set.
 
 #### {{agent-builder}} MCP server
 ```{applies_to}

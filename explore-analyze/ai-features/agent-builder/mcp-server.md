@@ -17,7 +17,7 @@ products:
 
 # {{agent-builder}} MCP server
 
-The [**Model Context Protocol (MCP) server**](https://modelcontextprotocol.io/docs/getting-started/intro) provides a standardized interface for external MCP hosts to access {{agent-builder}} tools. For example, you can run an {{esql}} query against your data from Claude Desktop without opening {{kib}}.
+The [**Model Context Protocol (MCP) server**](https://modelcontextprotocol.io/docs/getting-started/intro) provides a standardized interface for external MCP hosts to access {{agent-builder}} tools. For example, you can run an {{esql}} query against your data from Claude Desktop without opening {{kib}}. This server stays the {{agent-builder}} tools endpoint. The [Elastic MCP service](/explore-analyze/ai-features/elastic-mcp-service.md) is a separate hosted URL for {{serverless-short}} projects, and it does not replace this server.
 
 :::{note}
 On this page, {{agent-builder}} acts as the MCP server: external MCP hosts connect to it to use your {{agent-builder}} tools. To instead let your agents use tools hosted on an external MCP server, refer to [](tools/mcp-tools.md).

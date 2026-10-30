@@ -14,7 +14,7 @@ products:
 
 # Create or edit an OAuth client in {{agent-builder}}
 
-Register a new OAuth client in {{agent-builder}} to generate the credentials that an MCP host, such as Claude Desktop, needs to connect over OAuth 2.1. This is a one-time step you complete before connecting any host to {{agent-builder}}.
+Register a new OAuth client in {{agent-builder}} to generate the credentials that an MCP host, such as Claude Desktop, needs to connect over OAuth 2.1. This is a one-time step you complete before connecting any host to {{agent-builder}}. This procedure is for the {{agent-builder}} MCP server. It does not register a client for the [Elastic MCP service](/explore-analyze/ai-features/elastic-mcp-service.md).
 
 Each OAuth client is scoped to a single {{serverless-short}} project. Creating a client gives you a client ID and the MCP server URL for that project. For confidential clients, you also get a client secret that is shown only once and can't be retrieved later.
 
