@@ -1,6 +1,6 @@
 ---
-navigation_title: Elastic MCP service
-description: Learn what the hosted Elastic MCP service does, who it's for, and how it differs from the Agent Builder MCP server.
+navigation_title: "{{mcp-service}}"
+description: Connect Claude, Cursor, VS Code, ChatGPT, or another MCP host to Elastic serverless projects at mcp.elastic.co.
 type: overview
 # Lifecycle is unconfirmed. preview is a placeholder until product names preview, beta, or ga.
 applies_to:
@@ -14,84 +14,62 @@ products:
   - id: security
 ---
 
-# Elastic MCP service [elastic-mcp-service]
+# {{mcp-service}} [elastic-mcp-service]
 
-The Elastic MCP service is a hosted [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server at `https://mcp.elastic.co`.
-Connect the AI client you already use, such as Claude, Cursor, VS Code, or ChatGPT, to your {{serverless-short}} projects.
-Each call runs in the project, with your permissions.
+If you work in Claude, Cursor, Visual Studio Code, ChatGPT, Codex, or Gemini, you can use these MCP hosts to connect to the {{mcp-service}} at `https://mcp.elastic.co`.
+
+After you authorize it, the agent discovers the {{serverless-full}} projects you can access and calls Elastic with your permissions.
+<!-- TBD: What is "the agent" in this paragraph? -->
 
 ## Use cases [use-cases]
 
-Use the Elastic MCP service when you want Elastic from the client where you already work.
+- **Start in the client you already use.** Connect the host, sign in, and ask it to create a {{serverless-short}} project and work with the data you add to it.
+<!-- TO-DO: This bullet uses both "client" and "host" terminology seeming for the same thing, which confuses me -->
+- **Use every project you can access from one connection.** You don't add a new endpoint each time you create or switch projects.
+- **Let an agent do that work as you.** After you authorize the connection, an agent can take the same actions you can take in those projects.
 
-<!-- TBD: Is it intended for autonomous use by agents? Or in human-AI interactions? Neither or both? -->
+Choose a different option when:
 
-- **Work across the projects you can access.** You connect once, then use the serverless projects available to you, instead of configuring a separate endpoint for each project.
-<!-- TBD: Which tool requires you to "configure a separate endpoint for each project? It's unclear what this is compared to -->
-- **Let an agent act as you.** After you authorize the connection, the agent can take the actions you can take in those projects.
-- **Approve what an AI client can reach.** If you administer access for your organization, you review a connection that acts as a person, in that person's projects.
-<!-- TBD: This is worded very unclearly and seems like a variation of the previous bullet. This page should be very high-level and not duplicate details. -->
-
-This service does not apply in these cases:
-<!-- TBD: Some places it's referred to as a server, others as a "service". Which is right? -->
-
-- You need {{agent-builder}} tools, including tools you created. Use the [{{agent-builder}} MCP server](agent-builder/mcp-server.md). That server also works on {{stack}} deployments.
-<!-- TBD: What's an example of a tool so I know why I'd be interested in following this link? -->
-- The project uses [private connectivity](/deploy-manage/security/private-connectivity.md). This service does not support those projects.
-<!-- TBD: Are there reasons why you'd use other options like Elastic CLI or Elastic Claude Plugin instead? -->
+- You already have a project or deployment and you want {{agent-builder}} tools, including tools you created. For example, you can run an {{esql}} query from the client without opening {{kib}}. Use the [{{agent-builder}} MCP server](agent-builder/mcp-server.md). That server also works on {{stack}} deployments.
+- The project uses [private connectivity](/deploy-manage/security/private-connectivity.md). The  {{mcp-service}} doesn't support those projects.
+- You use {{ech}} or a self-managed cluster. This service is for {{serverless-short}} projects only. Use the [Elastic CLI](cli://index.md) or the {{agent-builder}} MCP server when those apply.
 
 ## How it works [how-it-works]
 
-You connect your MCP client to `https://mcp.elastic.co` and authorize it with OAuth 2.1.
-The service accepts the connection, finds the {{serverless-short}} projects you can access, and routes each call to the project.
-It does not copy your data out of the project.
+You connect the MCP host to `https://mcp.elastic.co` and authorize it with OAuth 2.1. The service finds the {{serverless-short}} projects you can access and routes each call to the project. Your data stays in the project. The connection acts as you.
 
-The client does not receive a separate tool for every Elastic API.
-<!-- TBD: Why do users care about lack of separate tools? -->
-It looks up the operation it needs, reads that operation's schema, and runs the call.
-Read, write, and destructive calls are handled separately.
-<!-- TBD: Why does the separate handling matter to users? -->
-When the client can ask you to confirm an action, a destructive call waits for that confirmation.
-<!-- TBD: This is unclear. What affects "when the client can ask"? Does it differ in each environment? -->
+The host doesn't load a tool for every Elastic API. It looks up the operation it needs, reads that operation's schema, and runs the call. That keeps the conversation from filling with the full API surface, and Elastic can change an API without breaking the client.
+<!-- TO-DO: This is another paragraph where it's unclear what the "client" and "host" overlap is -->
+
+Read, write, and destructive calls are separate so a destructive call can be confirmed. Hosts that support confirmation ask you before that call runs.
+<!-- TBD: Unnecessary disclaimer?
+Not every host shows that prompt.
+-->
+
+You can create and update projects through this service. You can't delete a project through it.
 
 :::{important}
-At launch, the connection can do what you can do. You can't yet limit it to selected projects or to read-only actions.
+The connection can do what you can do. You can't limit it to selected projects or to read-only actions.
 :::
-
-Most MCP clients connect without a client that you register yourself.
-Some clients require your organization to register the client.
-That registration is not the [{{agent-builder}} OAuth client](/deploy-manage/app-connections/create-oauth-client.md).
-<!-- TBD: I don't understand what the point of this paragraph is. Is it trying to tell me about the OAuth requirements? Seems useless as-is -->
 
 ## How it relates to other Elastic features [how-it-relates]
 
-These are separate features.
-<!-- For a fuller comparison, refer to [AI-powered features](/explore-analyze/ai-features.md#elastic-mcp-service). 
-
-TBD: I think it's better to do that here after all, instead of in the parent page.
--->
-
-- [{{agent-builder}} MCP server](agent-builder/mcp-server.md): {{agent-builder}} tools for one project or deployment, on {{serverless-short}} and on {{stack}}. The [Elastic Cloud Serverless connector for Claude](claude-connector.md) uses this server.
-<!-- TBD: Per above, if we assume that new users have no context on what Agent Builder tools are, what's a brief summary of the value? -->
-- [{{agent-builder}}](elastic-agent-builder.md): Chat in {{kib}} and build agents, tools, and skills in the product.
-- [Docs MCP server](/get-started/machine-readable-docs.md): Elastic documentation only. It does not connect to your data.
-- [AI agent skills](agent-skills.md): Elastic procedures for a coding agent. Skills don't connect the agent to a project. You can use them with this service, but it doesn't require them.
-- [{{context-engine}}](context-engine.md): Reusable context for agents. It is a separate product from this connection.
-<!-- TBD: I think context engine is still hidden from the navigation tree and likely has applies-to tags. Verify -->
-- [Elastic CLI](https://www.elastic.co/docs/reference/elastic-cli/cli): Command-line access to Elastic.
-<!-- TBD: This sounds like there's no overlap with the MCP Server. Verify and omit from this list if so -->
+- [{{agent-builder}} MCP server](agent-builder/mcp-server.md): Use this when you already have a project or deployment and you want {{agent-builder}} tools, including custom tools. The {{agent-builder}} MCP server is one endpoint per project. The [Elastic Cloud Serverless connector for Claude](claude-connector.md) uses this server.
+   <!-- TBD: It isn't the starting point if you don't have a project yet? -->
+- [{{agent-builder}}](elastic-agent-builder.md): Use this when you want to chat in {{kib}} and build agents, tools, and skills in the product.
+- [Docs MCP server](/get-started/machine-readable-docs.md): Use this when you want Elastic documentation only. It doesn't need an Elastic account and it doesn't connect to your data.
+- [AI agent skills](agent-skills.md): Use these when you want Elastic procedures in a coding agent.
+  <!-- TBD: How is a "coding agent" related to the "agent", "client" and "host" in earlier sections  -->
+  Skills don't connect the agent to a project. You can install them with this service but hey aren't required.
+- [Elastic CLI](cli://index.md): Use this when you want a terminal instead of an MCP host, including for self-managed clusters this service doesn't cover.
 
 ## Next steps [next-steps]
 
 - Connect a client at [`https://mcp.elastic.co`](https://mcp.elastic.co).
-- Compare this service with the {{agent-builder}} MCP server on the [AI-powered features](/explore-analyze/ai-features.md#elastic-mcp-service) page.
-<!-- TBD: I don't think either of these agent builder links are reasonable next steps. Rather, I think we should assume they want to start setting up projects, ingesting data, or query it -->
-- If you need {{agent-builder}} tools, start with the [{{agent-builder}} MCP server](agent-builder/mcp-server.md).
+- If you don't have a project yet, [create an {{serverless-full}} project](/deploy-manage/deploy/elastic-cloud/create-serverless-project.md). You can also ask the connected client to create one.
 
 ## Related pages [related-pages]
 
-<!-- TBD: These pages are all related to Agent builder not the MCP Server so I don't see the value of any of these links. Maybe it's more useful to link to overview pages about serverless projects, index basics, or other introductory content -->
-
-- [Connect an MCP host to {{agent-builder}}](/deploy-manage/app-connections/connect-mcp-host.md)
-- [Create or edit an OAuth client in {{agent-builder}}](/deploy-manage/app-connections/create-oauth-client.md)
-- [{{agent-builder}} permissions](agent-builder/permissions.md)
+- [Create an {{serverless-full}} project](/deploy-manage/deploy/elastic-cloud/create-serverless-project.md)
+- [Ingest for search use cases](/solutions/search/ingest-for-search.md)
+- [Elastic fundamentals](/get-started/index.md)

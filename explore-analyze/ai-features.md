@@ -24,6 +24,23 @@ For pricing information, refer to [pricing](https://www.elastic.co/pricing).
 - To use Elastic's AI-powered features, you need an appropriate subscription level or serverless feature tier. These vary by solution and feature. Refer to each feature's documentation to learn more.
 - Most features require at least one working large language model (LLM). To learn about connecting to an LLM, refer to [](/explore-analyze/ai-features/llm-guides/llm-connectors.md). Elastic Managed LLMs are available by default if your license supports it.
 
+## {{mcp-service}} [elastic-mcp-service]
+```{applies_to}
+serverless: ga
+```
+
+The [{{mcp-service}}](/explore-analyze/ai-features/elastic-mcp-service.md) at `https://mcp.elastic.co` is the simplest way to start from an MCP host such as Claude, Cursor, Visual Studio Code, or ChatGPT.
+You connect once, sign in, and the client can create or use {{serverless-short}} projects.
+The same connection is what an agent uses when it acts as you after you authorize it.
+
+<!-- TO-DO: Brief disambiguation and link to #model-context-protocol-mcp-servers -->
+
+## AI agent skills
+
+[AI agent skills for Elastic](/explore-analyze/ai-features/agent-skills.md) provides official, open-source skill packages that help AI coding agents perform Elastic-specific tasks. Skills are built on the Agent Skills open standard, and include guidance for tasks like working with {{es}} APIs, {{kib}} workflows, and {{observability}} and {{elastic-sec}} use cases.
+
+For Claude users, the [Elastic plugin for Claude](/explore-analyze/ai-features/claude-plugin.md) is the recommended way to install these skills. The plugin bundles all Elastic agent skills and an Elastic Docs MCP server connection into a single installable unit.
+
 ## Model selection and tested performance [model-selection-tested-performance]
 
 Elastic publishes tested model ratings and recommendations for chat and connector-based generative AI features including AI Assistant, {{agent-builder}}, and related workflows. Refer to:
@@ -79,23 +96,6 @@ When you want a managed workflow for text—embedding generation, field mapping,
 
 [Automatic Import](/explore-analyze/ai-features/automatic-import.md) uses an LLM to help you build a custom Elastic integration from a data sample when no prebuilt integration exists for your source. It applies across solutions that use {{agent}} and integrations, including {{observability}} and {{elastic-sec}}.
 
-### Elastic MCP service [elastic-mcp-service]
-
-The [Elastic MCP service](/explore-analyze/ai-features/elastic-mcp-service.md) is a hosted MCP server at `https://mcp.elastic.co`. You connect an AI client once and work with the {{serverless-short}} projects you can access. Calls run in those projects, with your permissions.
-
-This service and the {{agent-builder}} MCP server are both available:
-
-- Use the Elastic MCP service when you want one hosted URL for your {{serverless-short}} projects. It does not include {{agent-builder}} tools, and it does not support {{stack}}, {{ech}}, or projects that use PrivateLink.
-- Use the [{{agent-builder}} MCP server](/explore-analyze/ai-features/agent-builder/mcp-server.md) when you want {{agent-builder}} tools, including custom tools, for one project or deployment. It works on {{serverless-short}} and on {{stack}}. The [Elastic Cloud Serverless connector for Claude](/explore-analyze/ai-features/claude-connector.md) uses this server.
-
-Other ways to give an agent Elastic context are separate from both servers:
-
-- [Docs MCP server](/get-started/machine-readable-docs.md): Elastic documentation. It does not connect to your data.
-- [AI agent skills](/explore-analyze/ai-features/agent-skills.md): Elastic procedures for a coding agent. Skills don't connect the agent to a project. You can use them with either MCP server.
-- [{{context-engine}}](/explore-analyze/ai-features/context-engine.md): Reusable context that agents retrieve. It is not a connection from an external client.
-- [Elastic CLI](https://www.elastic.co/docs/reference/elastic-cli/cli): Command-line access to Elastic.
-- [Security MCP App](/solutions/security/mcp-app/elastic-security-mcp-app.md): A local app that opens interactive {{elastic-sec}} dashboards in an AI client.
-
 ## AI-powered features in the {{es}} solution/project type
 
 The [{{es}}](/solutions/search.md) solution view (or project type in {{serverless-short}}) includes certain AI-powered features beyond the core {{es}} capabilities available on the Elastic platform.
@@ -110,11 +110,13 @@ The [{{es}}](/solutions/search.md) solution view (or project type in {{serverles
 
 ### Model Context Protocol (MCP) servers
 
-These servers connect an agent to {{es}} data in one deployment or project. For one hosted URL across the {{serverless-short}} projects you can access, use the [Elastic MCP service](#elastic-mcp-service). That service does not include {{agent-builder}} tools.
+Elastic offers multiple MCP server options for connecting agents to your {{es}} data:
 
-The {{agent-builder}} MCP server exposes built-in and custom tools for {{es}} 9.2+ deployments and {{serverless-short}} projects. For older {{es}} versions without {{agent-builder}}, you can use the `mcp-elasticsearch` server, which has a limited tool set.
+- The [{{mcp-service}}](#elastic-mcp-service) provides a hosted URL for accessing your {{serverless-short}} projects.
+- The [{{agent-builder}} MCP server](#agent-builder-mcp-server) exposes built-in and custom tools for {{es}} 9.2+ deployments and {{serverless-short}} projects.
+- For older {{es}} versions without {{agent-builder}}, you can use the [`mcp-elasticsearch`](#es-mcp-server) server, which has a limited tool set.
 
-#### {{agent-builder}} MCP server
+#### {{agent-builder}} MCP server [agent-builder-mcp-server]
 ```{applies_to}
 stack: preview =9.2, ga 9.3+
 serverless: ga
@@ -125,7 +127,7 @@ Elastic 9.2+ deployments and Serverless projects provide an [Agent Builder MCP s
 
 {applies_to}`serverless: ga` To connect Claude to the MCP server of an {{serverless-full}} project, you can add the [Elastic Cloud Serverless connector for Claude](/explore-analyze/ai-features/claude-connector.md) from the Claude directory.
 
-#### {{es}} MCP server
+#### {{es}} MCP server [es-mcp-server]
 ```{applies_to}
 stack: deprecated 9.2
 serverless: deprecated
@@ -196,9 +198,3 @@ serverless: ga
 ```
 
 [Entity summary](/solutions/security/advanced-entity-analytics/view-entity-details.md#entity-summary), available in the entity details flyout, uses AI to generate a summary of a user's or host's security context. It aggregates information such as risk scores, asset criticality, vulnerabilities, and {{ml}} anomalies to provide a consolidated view of the entity's security posture. The summary helps you prioritize investigations and identify recommended next steps.
-
-## AI agent skills
-
-[AI agent skills for Elastic](/explore-analyze/ai-features/agent-skills.md) provides official, open-source skill packages that help AI coding agents perform Elastic-specific tasks. Skills are built on the Agent Skills open standard, and include guidance for tasks like working with {{es}} APIs, {{kib}} workflows, and {{observability}} and {{elastic-sec}} use cases.
-
-For Claude users, the [Elastic plugin for Claude](/explore-analyze/ai-features/claude-plugin.md) is the recommended way to install these skills. The plugin bundles all Elastic agent skills and an Elastic Docs MCP server connection into a single installable unit.
