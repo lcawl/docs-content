@@ -21,6 +21,8 @@ The [**Model Context Protocol (MCP) server**](https://modelcontextprotocol.io/do
 
 :::{note}
 On this page, {{agent-builder}} acts as the MCP server: external MCP hosts connect to it to use your {{agent-builder}} tools. To instead let your agents use tools hosted on an external MCP server, refer to [](tools/mcp-tools.md).
+
+To use {{mcp-service}} as the MCP server, refer to [](/explore-analyze/ai-features/elastic-mcp-service.md).
 :::
 
 ## MCP server endpoint [mcp-server-endpoint]
