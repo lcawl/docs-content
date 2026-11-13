@@ -49,6 +49,8 @@ You can copy the MCP server URL for the current space in the Tools GUI. Refer to
 
 {applies_to}`serverless: ga` For setup instructions for specific MCP hosts, including prebuilt Elastic connectors in their directories, refer to [](/deploy-manage/app-connections/connect-mcp-host.md).
 
+The {{mcp-service}} is a different MCP server: one URL for every {{serverless-short}} project you can access, with no {{kib}} OAuth client. Refer to [Connect an MCP host to the {{mcp-service}}](/explore-analyze/ai-features/connect-elastic-mcp-service.md).
+
 ## Authentication and configuration [mcp-server-authentication]
 
 External MCP hosts need credentials to reach the MCP server endpoint. The way that you configure your MCP server depends on your authentication method. Choose API keys or OAuth 2.1 based on your deployment type and use case.

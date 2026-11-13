@@ -14,6 +14,8 @@ products:
 
 After an OAuth client is [created](create-oauth-client.md), configure your MCP host, usually your AI agent, with the client ID and MCP server URL, then complete the OAuth authorization flow to establish the connection. After completing the setup, your MCP host has an authorized OAuth connection to {{agent-builder}} and can run its tools with your permissions.
 
+This procedure is for the {{agent-builder}} MCP server in one project. To connect a host to every {{serverless-short}} project you can access, refer to [Connect an MCP host to the {{mcp-service}}](/explore-analyze/ai-features/connect-elastic-mcp-service.md).
+
 This page covers several common MCP hosts:
 * Claude Code CLI
 * Claude desktop app
