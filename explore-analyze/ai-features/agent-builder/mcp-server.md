@@ -21,6 +21,8 @@ The [**Model Context Protocol (MCP) server**](https://modelcontextprotocol.io/do
 
 :::{note}
 On this page, {{agent-builder}} acts as the MCP server: external MCP hosts connect to it to use your {{agent-builder}} tools. To instead let your agents use tools hosted on an external MCP server, refer to [](tools/mcp-tools.md).
+
+To use {{mcp-service}} as the MCP server, refer to [](/explore-analyze/ai-features/elastic-mcp-service.md).
 :::
 
 ## MCP server endpoint [mcp-server-endpoint]
@@ -46,6 +48,8 @@ You can copy the MCP server URL for the current space in the Tools GUI. Refer to
 {applies_to}`stack: preview =9.2.0` **Copy MCP Server URL** on the Tools page doesn't include the space ID. Refer to the [known issue](limitations-known-issues.md#mcp-server-url-copy-button-omits-space-name).
 
 {applies_to}`serverless: ga` For setup instructions for specific MCP hosts, including prebuilt Elastic connectors in their directories, refer to [](/deploy-manage/app-connections/connect-mcp-host.md).
+
+The {{mcp-service}} is a different MCP server: one URL for every {{serverless-short}} project you can access, with no {{kib}} OAuth client. Refer to [Connect an MCP host to the {{mcp-service}}](/explore-analyze/ai-features/connect-elastic-mcp-service.md).
 
 ## Authentication and configuration [mcp-server-authentication]
 
