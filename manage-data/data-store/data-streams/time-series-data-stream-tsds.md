@@ -114,7 +114,11 @@ A {{tsds}} works like a regular data stream, with some key differences:
 * {applies_to}`stack: ga 9.4` **Sequence numbers are disabled:** A TSDS [disables sequence numbers](elasticsearch://reference/elasticsearch/index-settings/index-modules.md#index-disable-sequence-numbers) by default to substantially improve storage efficiency (up to 2x).
 
   When sequence numbers are disabled, [optimistic concurrency control](elasticsearch://reference/elasticsearch/rest-apis/optimistic-concurrency-control.md) gets disabled, causing [update-by-query]({{es-apis}}/operation/operation-update-by-query) and [delete-by-query]({{es-apis}}/operation/operation-delete-by-query) operations to execute with weaker consistency. These capabilities are normally not relevant for time series workloads, but if you need them for your application, you can restore sequence numbers by setting `index.disable_sequence_numbers: false` in the index template of the relevant TSDS.
-* {applies_to}`stack: ga 9.6+` **Minimum data lifecycle**: A {{tsds-init}} that does not have a data stream lifecycle or [index lifecycle management](/manage-data/lifecycle/index-lifecycle-management.md)configured has a [minimum lifecycle](/manage-data/lifecycle/data-stream.md#minimum-data-stream-lifecycle) by default.
+* {applies_to}`stack: ga 9.6+` **Minimum data lifecycle**: A {{tsds-init}} that does not have a data stream lifecycle or [index lifecycle management](/manage-data/lifecycle/index-lifecycle-management.md) configured has a [minimum lifecycle](/manage-data/lifecycle/data-stream/dlm-default-lifecycle.md#minimum-data-stream-lifecycle) by default. The minimum lifecycle rolls over and tail merges the stream.
+<!--
+TBD: Unique to TSDS?
+* {applies_to}`serverless: ga` **Default data stream lifecycle**: A {{tsds-init}} whose template has no lifecycle still gets a [default data stream lifecycle](/manage-data/lifecycle/data-stream/dlm-default-lifecycle.md#default-lifecycle-serverless) when the stream is created.
+-->
 
 ## Query time series data
 ```{applies_to}

@@ -93,6 +93,10 @@ PUT _index_template/quickstart-tsds-template
 
 This example defines a `@timestamp` field for illustration purposes. Usually, you can use the default `@timestamp` field (which has a default type of `date`) instead of defining a timestamp in the mapping.
 
+{applies_to}`stack: ga 9.6+` This stream is covered by the [minimum lifecycle](/manage-data/lifecycle/data-stream/dlm-default-lifecycle.md#minimum-data-stream-lifecycle), which rolls over and tail merges the stream and does not delete data.
+
+{applies_to}`serverless: ga` This stream gets a [default data stream lifecycle](/manage-data/lifecycle/data-stream/dlm-default-lifecycle.md#default-lifecycle-serverless) when you create it.
+
 The response includes `"acknowledged": true`, which confirms the template was created.
 
 ::::

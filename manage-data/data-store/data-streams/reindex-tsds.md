@@ -93,6 +93,12 @@ PUT _index_template/my-new-tsds-template
 
 Don't add data stream lifecycle or {{ilm}} details to the template yet.
 That keeps lifecycle actions such as downsampling from modifying the destination while you reindex.
+
+{applies_to}`stack: ga 9.6+` Omitting a lifecycle no longer leaves the destination unmanaged. The [minimum lifecycle](/manage-data/lifecycle/data-stream/dlm-default-lifecycle.md#minimum-data-stream-lifecycle) still rolls over and tail merges the stream. To keep the destination unmanaged while you reindex, turn off the lifecycle.
+<!--
+TO-DO: As part of https://github.com/elastic/docs-content/issues/9642
+[turn off the lifecycle](/manage-data/lifecycle/data-stream/tutorial-update-existing-data-stream.md#turn-off-lifecycle).
+-->
 ::::
 ::::{step} Create the destination data stream
 :anchor: create-destination
@@ -426,6 +432,11 @@ PUT _index_template/my-new-tsds-template
 
 Don't add optional data stream lifecycle details such as downsampling or data retention to the template yet.
 By using only the default configuration, you reduce the actions that can modify the destination while you reindex.
+Omitting those details still assigns a [default data stream lifecycle](/manage-data/lifecycle/data-stream/dlm-default-lifecycle.md#default-lifecycle-serverless). To keep the destination unmanaged while you reindex, turn off the lifecycle.
+<!--
+TO-DO: As part of https://github.com/elastic/docs-content/issues/9642
+[turn off the lifecycle](/manage-data/lifecycle/data-stream/tutorial-update-existing-data-stream.md#turn-off-lifecycle).
+-->
 ::::
 
 ::::{step} Create the destination data stream
