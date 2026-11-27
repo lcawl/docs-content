@@ -95,9 +95,11 @@ The structure of a {{tsds}} is defined by an index template. Create an index tem
         - To define dimensions dynamically, you can use a pass-through object. For details, refer to [Defining sub-fields as time series dimensions](elasticsearch://reference/elasticsearch/mapping-reference/passthrough.md#passthrough-dimensions).
     - **Metrics:** To define a metric, use the `time_series_metric` mapping parameter. For details, refer to [Metrics](/manage-data/data-store/data-streams/time-series-data-stream-tsds.md#time-series-metric).
     - **Timestamp** (optional): Define a `date` or `date_nanos` mapping for the `@timestamp` field. If you don't specify a mapping, {{es}} maps `@timestamp` as a `date` field with default options.
-    - {applies_to}`serverless: unavailable` {applies_to}`stack: ga` **Lifecycle management**: If you're using {{stack}}, define a lifecycle to enable automatic rollover and prevent indices from growing too large.
+    - {applies_to}`serverless: unavailable` {applies_to}`stack: ga` **Lifecycle management**: If you're using {{stack}}, define a lifecycle to manage retention and storage, and to prevent indices from growing too large.
         - Add a `lifecycle` object and specify `"enabled": true`. 
         - If you created an ILM policy in [step 1](#tsds-ilm-policy), reference it in the settings with `index.lifecycle.name`.
+        - {applies_to}`stack: ga 9.6+` If you omit a data stream lifecycle and an {{ilm-init}} policy, the [minimum lifecycle](/manage-data/lifecycle/data-stream/dlm-default-lifecycle.md#minimum-data-stream-lifecycle) rolls over and tail merges the stream. Configure an explicit data stream lifecycle for retention, downsampling, or frozen {{search-snaps}}. If the stream uses the pre-installed `metrics` {{ilm-init}} policy, refer to [how that policy migrates to the minimum lifecycle](/manage-data/lifecycle/data-stream/dlm-default-lifecycle.md#minimum-lifecycle-metrics-policy).
+    - {applies_to}`serverless: ga` **Lifecycle management**: If you omit a lifecycle, {{es}} still assigns a [default data stream lifecycle](/manage-data/lifecycle/data-stream/dlm-default-lifecycle.md#default-lifecycle-serverless) when the stream is created.
     - **Settings** (optional): Define any relevant index settings, such as [`index.number_of_replicas`](elasticsearch://reference/elasticsearch/index-settings/index-modules.md#dynamic-index-number-of-replicas), for the data stream's backing indices.
 - **Priority:** Set the priority higher than `200` to avoid [collisions](/manage-data/data-store/templates.md#avoid-index-pattern-collisions) with built-in templates.
 
@@ -148,11 +150,21 @@ PUT _index_template/my-weather-sensor-index-template
 ```
 
 1. {{stack}} only
-2. {{stack}} only, enabled by default in {{serverless-short}}
+2. {{stack}} only. On {{serverless-short}}, a stream with no lifecycle still gets a [default data stream lifecycle](/manage-data/lifecycle/data-stream/dlm-default-lifecycle.md#default-lifecycle-serverless).
 
 :::{important}
-:applies_to: stack: ga
+:applies_to: {"stack": "ga 9.0-9.5"}
 Without lifecycle management enabled, a {{tsds}} can grow into very large indices that never roll over. This can lead to performance issues. Always configure lifecycle management for {{stack}} production deployments.
+:::
+
+:::{note}
+:applies_to: {"stack": "ga 9.6+"}
+A {{tsds-init}} with no data stream lifecycle and no {{ilm-init}} policy is managed by the [minimum lifecycle](/manage-data/lifecycle/data-stream/dlm-default-lifecycle.md#minimum-data-stream-lifecycle) by default. The minimum lifecycle rolls over and tail merges the stream. Configure an explicit data stream lifecycle for retention, downsampling, or frozen {{search-snaps}}.
+:::
+
+:::{note}
+:applies_to: {"serverless": "ga"}
+If you omit a lifecycle from the template, {{es}} still assigns a [default data stream lifecycle](/manage-data/lifecycle/data-stream/dlm-default-lifecycle.md#default-lifecycle-serverless) when the stream is created.
 :::
 
 :::{dropdown} Component templates (optional)

@@ -26,6 +26,8 @@ Downsampling requires **read-only** data.
 
 In most cases, you can choose the data stream lifecycle option. If you're using [data tiers](/manage-data/lifecycle/data-tiers.md) in {{stack}}, choose the index lifecycle option.
 
+{applies_to}`stack: ga 9.6+` {applies_to}`serverless: ga` The [default lifecycle](/manage-data/lifecycle/data-stream/dlm-default-lifecycle.md) does not downsample, so downsampling still requires an explicit data stream lifecycle or {{ilm-init}} policy.
+
 ::::{tab-set}
 
 

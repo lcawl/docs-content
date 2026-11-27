@@ -40,7 +40,7 @@ In this tutorial, {{ilm}} ({{ilm-init}}) is used to automate the management of y
 {{ilm-init}} requires an index lifecycle policy.
 
 :::{admonition} Simpler lifecycle management in {{serverless-short}} projects
-{{ilm-init}} lets you automatically transition indices through data tiers according to your performance needs and retention requirements. This allows you to balance hardware costs with performance. {{ilm-init}} is not available in {{serverless-short}}, where performance optimizations are automatic. Instead, [data stream lifecycle](/manage-data/lifecycle/data-stream.md) is available as a data management option.
+{{ilm-init}} lets you automatically transition indices through data tiers according to your performance needs and retention requirements. This allows you to balance hardware costs with performance. {{ilm-init}} is not available in {{serverless-short}}, where performance optimizations are automatic. Instead, [data stream lifecycle](/manage-data/lifecycle/data-stream.md) is available as a data management option. If the index template has no lifecycle, {{es}} still assigns a [default data stream lifecycle](/manage-data/lifecycle/data-stream/dlm-default-lifecycle.md#default-lifecycle-serverless) when the stream is created.
 :::
 
 To create an index lifecycle policy in {{kib}}:
